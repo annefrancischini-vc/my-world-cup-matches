@@ -30,7 +30,7 @@
         <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
             <div>
                 <h1 id="txt-title" class="text-xl font-black tracking-wider uppercase">🗓️ Meus Jogos da Copa</h1>
-                <p id="txt-subtitle" class="text-xs opacity-80 mt-0.5 font-medium">Monte sua agenda e compartilhe no WhatsApp</p>
+                <p id="txt-subtitle" class="text-xs opacity-80 mt-0.5 font-medium">Monte suas partidas imperdíveis e compartilhe no WhatsApp</p>
             </div>
             
             <div class="relative inline-block text-left">
@@ -45,7 +45,7 @@
     <main class="max-w-md mx-auto p-4 relative z-10">
         
         <div id="txt-instruction" class="mb-5 text-xs font-bold tracking-wide uppercase text-blue-800/80 text-center bg-white py-3 px-4 rounded-2xl shadow-sm border border-slate-200/60">
-            Selecione os jogos que você pretende assistir para criar sua agenda:
+            selecione os jogos que você quer parar para ver
         </div>
 
         <div id="lista-jogos" class="space-y-3.5">
@@ -66,8 +66,8 @@
         const i18n = {
             pt: {
                 title: "🗓️ Meus Jogos",
-                subtitle: "Monte sua agenda e compartilhe no WhatsApp",
-                instruction: "Selecione os jogos que você pretende assistir para criar sua agenda:",
+                subtitle: "Monte suas partidas imperdíveis e compartilhe no WhatsApp",
+                instruction: "selecione os jogos que você quer parar para ver",
                 btnText: "Compartilhar Agenda",
                 whatsappHeader: "👋 Olha só os jogos da Copa que eu vou assistir! Bora ver juntos?\n\n",
                 whatsappFooter: "Quais desses você vai ver também?",
