@@ -66,6 +66,9 @@
     </div>
 
     <script>
+        // URL da sua API no Google Apps Script integrada com sucesso!
+        const API_URL = "https://script.google.com/macros/s/AKfycbxViNJqBy_ECJjulYSF5IVv3IDOh7_AG7xHvmjAVLSEipN43kBtAfAtWpJC3cvJryIYbA/exec";
+
         // Dicionário de Idiomas
         const i18n = {
             pt: {
@@ -73,6 +76,8 @@
                 subtitle: "Monte suas partidas e compartilhe",
                 instruction: "selecione os jogos que você quer parar para ver",
                 btnText: "Compartilhar Agenda",
+                loading: "⚽ Buscando a tabela oficial do seu Google Sheets...",
+                error: "Erro ao carregar os jogos da planilha. Verifique a implantação do Apps Script.",
                 whatsappHeader: "👋 Olha só os jogos da Copa que eu vou assistir! Bora ver juntos?\n\n",
                 whatsappFooter: "Faça a sua lista também em:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
                 days: { "Seg": "Segunda", "Ter": "Terça", "Qua": "Quarta", "Qui": "Quinta", "Sex": "Sexta", "Sáb": "Sábado", "Dom": "Domingo" }
@@ -82,6 +87,8 @@
                 subtitle: "Build your schedule and share",
                 instruction: "Select the matches you plan to watch:",
                 btnText: "Share Schedule",
+                loading: "⚽ Fetching match schedule from your Google Sheets...",
+                error: "Failed to load matches from spreadsheet. Check Apps Script configuration.",
                 whatsappHeader: "👋 Check out the World Cup matches I'm planning to watch! Let's watch together?\n\n",
                 whatsappFooter: "Make your own list too at:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
                 days: { "Seg": "Monday", "Ter": "Tuesday", "Qua": "Wednesday", "Qui": "Thursday", "Sex": "Friday", "Sáb": "Saturday", "Dom": "Sunday" }
@@ -90,15 +97,7 @@
 
         let currentLang = 'pt';
         const jogosSelecionados = new Set();
-
-        // Dados dos Jogos
-        const jogos = [
-            { id: 1, data: "08/06", diaSemana: "Seg", hora: "11:00", selecao1: { pt: "Brasil", en: "Brazil" }, selecao2: { pt: "Croácia", en: "Croatia" } },
-            { id: 2, data: "08/06", diaSemana: "Seg", hora: "16:00", selecao1: { pt: "França", en: "France" }, selecao2: { pt: "Marrocos", en: "Morocco" } },
-            { id: 3, data: "09/06", diaSemana: "Ter", hora: "13:00", selecao1: { pt: "Argentina", en: "Argentina" }, selecao2: { pt: "Japão", en: "Japan" } },
-            { id: 4, data: "10/06", diaSemana: "Qua", hora: "09:00", selecao1: { pt: "Espanha", en: "Spain" }, selecao2: { pt: "Canadá", en: "Canada" } },
-            { id: 5, data: "11/06", diaSemana: "Qui", hora: "16:00", selecao1: { pt: "Alemanha", en: "Germany" }, selecao2: { pt: "Portugal", en: "Portugal" } }
-        ];
+        let jogos = []; // Dados em tempo real vindos do seu Sheets
 
         // Elementos do DOM
         const elTitle = document.getElementById('txt-title');
@@ -109,24 +108,40 @@
         const elListaJogos = document.getElementById('lista-jogos');
         const elBtnCompartilhar = document.getElementById('btn-compartilhar');
 
-        // Atualiza textos da interface
+        // Atualiza os textos fixos da interface
         function atualizarIdiomaInterface() {
             const textos = i18n[currentLang];
             elTitle.innerText = textos.title;
             elSubtitle.innerText = textos.subtitle;
             elInstruction.innerText = textos.instruction;
             atualizarBotao();
-            renderizarJogos();
+            if (jogos.length > 0) {
+                renderizarJogos();
+            }
         }
 
-        // Renderiza os cards de jogos
+        // Faz a chamada assíncrona para buscar os dados do Google Sheets
+        async function buscarJogosDaPlanilha() {
+            const textos = i18n[currentLang];
+            elListaJogos.innerHTML = `<div class="text-center text-sm font-bold text-slate-400 py-12 animate-pulse">${textos.loading}</div>`;
+            
+            try {
+                const response = await fetch(API_URL);
+                jogos = await response.json();
+                renderizarJogos();
+            } catch (error) {
+                console.error("Erro na requisição da API:", error);
+                elListaJogos.innerHTML = `<div class="text-center text-sm font-bold text-red-500 py-12 px-4">⚠️ ${textos.error}</div>`;
+            }
+        }
+
+        // Renderiza os cards de jogos dinamicamente
         function renderizarJogos() {
             elListaJogos.innerHTML = '';
             const textos = i18n[currentLang];
 
             jogos.forEach(jogo => {
                 const isSelected = jogosSelecionados.has(jogo.id);
-                // Mudança semântica: usando <button> no lugar de <div> para acessibilidade
                 const card = document.createElement('button');
                 card.type = 'button';
                 card.setAttribute('aria-pressed', isSelected);
@@ -138,6 +153,14 @@
                 }`;
                 
                 const diaTraduzido = textos.days[jogo.diaSemana] || jogo.diaSemana;
+                
+                // Lógica de exibição da Tag Curada de Destaque ("Veja Jogar", "Favorita", etc.)
+                const textoDestaque = jogo.destaque ? jogo.destaque[currentLang] : '';
+                const badgeHtml = textoDestaque 
+                    ? `<div class="text-[10px] inline-block font-black uppercase px-2 py-0.5 rounded-md mt-2 ${
+                        isSelected ? 'bg-yellow-400 text-slate-900' : 'bg-blue-100 text-blue-800'
+                      }">${textoDestaque}</div>` 
+                    : '';
 
                 card.innerHTML = `
                     <div class="flex-1">
@@ -151,6 +174,7 @@
                             <span class="${isSelected ? 'text-yellow-400' : 'text-slate-300'} font-medium text-xs">×</span>
                             <span>${jogo.selecao2[currentLang]}</span>
                         </div>
+                        ${badgeHtml}
                     </div>
                     <div class="ml-4 flex items-center justify-center shrink-0">
                         <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
@@ -168,7 +192,7 @@
             });
         }
 
-        // Alterna o estado de seleção do jogo
+        // Gerencia os jogos selecionados pelo usuário
         function alternarSelecao(id) {
             if (jogosSelecionados.has(id)) {
                 jogosSelecionados.delete(id);
@@ -179,7 +203,7 @@
             atualizarBotao();
         }
 
-        // Atualiza estado do botão de compartilhar
+        // Atualiza dinamicamente o texto e comportamento do botão inferior
         function atualizarBotao() {
             const qtd = jogosSelecionados.size;
             const textos = i18n[currentLang];
@@ -194,7 +218,7 @@
             }
         }
 
-        // Monta e envia a mensagem para o WhatsApp
+        // Estrutura a mensagem final em formato de lista e envia via API do WhatsApp
         elBtnCompartilhar.addEventListener('click', () => {
             if (jogosSelecionados.size === 0) return;
 
@@ -214,19 +238,19 @@
             mensagem += textos.whatsappFooter;
             const urlMensagem = encodeURIComponent(mensagem);
             
-            // Tenta abrir o WhatsApp de forma otimizada para mobile e desktop
             const whatsappUrl = `https://wa.me/?text=${urlMensagem}`;
             window.open(whatsappUrl, '_blank');
         });
 
-        // EventListeners
+        // Evento de mudança de Idioma
         elSelectLang.addEventListener('change', (e) => {
             currentLang = e.target.value;
             atualizarIdiomaInterface();
         });
 
-        // Init
+        // Inicialização do aplicativo móvel
         atualizarIdiomaInterface();
+        buscarJogosDaPlanilha();
     </script>
 </body>
 </html>
