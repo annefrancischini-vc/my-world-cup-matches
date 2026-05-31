@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1d4ed8">
+    <meta name="description" content="Monte sua agenda de jogos da Copa e compartilhe no WhatsApp.">
     <title>My World Cup Games / Meus Jogos da Copa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -23,7 +25,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
 
-    <div class="fixed inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden" aria-hidden="true">
         <div class="jersey-number text-blue-600/[0.06] transform -rotate-6 select-none">11</div>
     </div>
 
@@ -31,11 +33,11 @@
         <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
             <div>
                 <h1 id="txt-title" class="text-xl font-black tracking-wider uppercase">🗓️ Meus Jogos</h1>
-                <p id="txt-subtitle" class="text-xs opacity-80 mt-0.5 font-medium">Monte suas partidas imperdíveis e compartilhe no WhatsApp</p>
+                <p id="txt-subtitle" class="text-xs opacity-80 mt-0.5 font-medium">Monte suas partidas imperdíveis</p>
             </div>
             
             <div class="relative inline-block text-left">
-                <select id="select-lang" class="bg-white/10 text-white text-xs font-bold rounded-xl px-3 py-2 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 cursor-pointer appearance-none pr-7 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23fbbf24%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%27style%3E')] bg-[length:8px_auto] bg-[right_10px_center] bg-no-repeat">
+                <select id="select-lang" aria-label="Selecione o idioma" class="bg-white/10 text-white text-xs font-bold rounded-xl px-3 py-2 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 cursor-pointer appearance-none pr-7 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23fbbf24%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%27style%3E')] bg-[length:8px_auto] bg-[right_10px_center] bg-no-repeat">
                     <option value="pt" class="text-slate-800">PT 🇧🇷</option>
                     <option value="en" class="text-slate-800">EN 🇺🇸</option>
                 </select>
@@ -45,7 +47,7 @@
 
     <main class="max-w-md mx-auto p-4 relative z-10">
         
-        <div id="txt-instruction" class="mb-5 text-xs font-bold tracking-wide uppercase text-blue-800 text-center bg-white py-3 px-4 rounded-2xl shadow-sm border border-slate-200/60">
+        <div id="txt-instruction" class="mb-5 text-xs font-bold tracking-wide uppercase text-blue-800 text-center bg-white py-3 px-4 rounded-2xl shadow-sm border border-slate-200/60" role="status">
             selecione os jogos que você quer parar para ver
         </div>
 
@@ -56,9 +58,9 @@
 
     <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md p-4 border-t-2 border-slate-200 shadow-xl z-50">
         <div class="max-w-md mx-auto">
-            <button id="btn-compartilhar" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-black uppercase tracking-wider py-4 px-4 rounded-2xl shadow-lg shadow-blue-700/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
-                <span class="text-yellow-400">💬</span>
-                <span id="txt-btn-text">Compartilhar Agenda</span>
+            <button id="btn-compartilhar" disabled class="w-full bg-blue-700 hover:bg-blue-800 text-white font-black uppercase tracking-wider py-4 px-4 rounded-2xl shadow-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-300">
+                <span class="text-yellow-400 text-lg">💬</span>
+                <span id="txt-btn-text">Compartilhar Agenda (0)</span>
             </button>
         </div>
     </div>
@@ -68,28 +70,28 @@
         const i18n = {
             pt: {
                 title: "🗓️ Meus Jogos",
-                subtitle: "Monte suas partidas imperdíveis e compartilhe no WhatsApp",
+                subtitle: "Monte suas partidas e compartilhe",
                 instruction: "selecione os jogos que você quer parar para ver",
                 btnText: "Compartilhar Agenda",
                 whatsappHeader: "👋 Olha só os jogos da Copa que eu vou assistir! Bora ver juntos?\n\n",
-                whatsappFooter: "\nQuais desses você vai ver também?",
+                whatsappFooter: "Faça a sua lista também em:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
                 days: { "Seg": "Segunda", "Ter": "Terça", "Qua": "Quarta", "Qui": "Quinta", "Sex": "Sexta", "Sáb": "Sábado", "Dom": "Domingo" }
             },
             en: {
                 title: "⚽ My Matchday",
-                subtitle: "Build your schedule and share it on WhatsApp",
+                subtitle: "Build your schedule and share",
                 instruction: "Select the matches you plan to watch:",
                 btnText: "Share Schedule",
                 whatsappHeader: "👋 Check out the World Cup matches I'm planning to watch! Let's watch together?\n\n",
-                whatsappFooter: "\nWhich of these are you watching too?",
+                whatsappFooter: "Make your own list too at:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
                 days: { "Seg": "Monday", "Ter": "Tuesday", "Qua": "Wednesday", "Qui": "Thursday", "Sex": "Friday", "Sáb": "Saturday", "Dom": "Sunday" }
             }
         };
 
         let currentLang = 'pt';
-        const jogosSelecionados = new Set(); // Armazena os IDs dos jogos
+        const jogosSelecionados = new Set();
 
-        // Dados dos Jogos (MVP - fixos por enquanto)
+        // Dados dos Jogos
         const jogos = [
             { id: 1, data: "08/06", diaSemana: "Seg", hora: "11:00", selecao1: { pt: "Brasil", en: "Brazil" }, selecao2: { pt: "Croácia", en: "Croatia" } },
             { id: 2, data: "08/06", diaSemana: "Seg", hora: "16:00", selecao1: { pt: "França", en: "France" }, selecao2: { pt: "Marrocos", en: "Morocco" } },
@@ -107,7 +109,7 @@
         const elListaJogos = document.getElementById('lista-jogos');
         const elBtnCompartilhar = document.getElementById('btn-compartilhar');
 
-        // Função para atualizar os textos da interface
+        // Atualiza textos da interface
         function atualizarIdiomaInterface() {
             const textos = i18n[currentLang];
             elTitle.innerText = textos.title;
@@ -117,20 +119,22 @@
             renderizarJogos();
         }
 
-        // Função para criar o HTML dos cards de jogos
+        // Renderiza os cards de jogos
         function renderizarJogos() {
             elListaJogos.innerHTML = '';
             const textos = i18n[currentLang];
 
             jogos.forEach(jogo => {
                 const isSelected = jogosSelecionados.has(jogo.id);
-                const card = document.createElement('div');
+                // Mudança semântica: usando <button> no lugar de <div> para acessibilidade
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.setAttribute('aria-pressed', isSelected);
                 
-                // Estilização inspirada nas cores azul e branco de 2002
-                card.className = `card-jogo p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between select-none ${
+                card.className = `w-full text-left card-jogo p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between select-none focus:outline-none focus:ring-4 focus:ring-blue-300 ${
                     isSelected 
                     ? 'bg-blue-700 text-white border-blue-800 shadow-md transform -translate-y-0.5' 
-                    : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300'
+                    : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 shadow-sm'
                 }`;
                 
                 const diaTraduzido = textos.days[jogo.diaSemana] || jogo.diaSemana;
@@ -144,28 +148,27 @@
                         </div>
                         <div class="text-base font-extrabold mt-1.5 flex items-center gap-2.5">
                             <span>${jogo.selecao1[currentLang]}</span>
-                            <span class="${isSelected ? 'text-yellow-400' : 'text-blue-700/20'} font-medium text-xs">×</span>
+                            <span class="${isSelected ? 'text-yellow-400' : 'text-slate-300'} font-medium text-xs">×</span>
                             <span>${jogo.selecao2[currentLang]}</span>
                         </div>
                     </div>
-                    <div class="ml-4 flex items-center justify-center">
+                    <div class="ml-4 flex items-center justify-center shrink-0">
                         <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
                             isSelected 
                             ? 'bg-white border-white text-blue-700' 
-                            : 'border-slate-200 bg-slate-50'
+                            : 'border-slate-300 bg-slate-50'
                         }">
-                            ${isSelected ? '<svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                            ${isSelected ? '<svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>' : ''}
                         </div>
                     </div>
                 `;
 
-                // Evento de clique para selecionar/deselecionar
                 card.addEventListener('click', () => alternarSelecao(jogo.id));
                 elListaJogos.appendChild(card);
             });
         }
 
-        // Função para adicionar/remover da lista de selecionados
+        // Alterna o estado de seleção do jogo
         function alternarSelecao(id) {
             if (jogosSelecionados.has(id)) {
                 jogosSelecionados.delete(id);
@@ -176,15 +179,22 @@
             atualizarBotao();
         }
 
-        // Função para atualizar o contador e estado do botão
+        // Atualiza estado do botão de compartilhar
         function atualizarBotao() {
             const qtd = jogosSelecionados.size;
             const textos = i18n[currentLang];
             elBtnText.innerText = `${textos.btnText} (${qtd})`;
-            elBtnCompartilhar.disabled = qtd === 0;
+            
+            if (qtd === 0) {
+                elBtnCompartilhar.disabled = true;
+                elBtnCompartilhar.classList.remove('shadow-blue-700/30');
+            } else {
+                elBtnCompartilhar.disabled = false;
+                elBtnCompartilhar.classList.add('shadow-blue-700/30');
+            }
         }
 
-        // Função para gerar e abrir o link do WhatsApp
+        // Monta e envia a mensagem para o WhatsApp
         elBtnCompartilhar.addEventListener('click', () => {
             if (jogosSelecionados.size === 0) return;
 
@@ -197,24 +207,25 @@
                     const s1 = jogo.selecao1[currentLang];
                     const s2 = jogo.selecao2[currentLang];
                     
-                    // Formatação da mensagem para o WhatsApp
                     mensagem += `📅 *${diaTraduzido}, ${jogo.data} - ${jogo.hora}*\n⚽ ${s1} × ${s2}\n\n`;
                 }
             });
 
             mensagem += textos.whatsappFooter;
-
             const urlMensagem = encodeURIComponent(mensagem);
-            window.open(`https://api.whatsapp.com/send?text=${urlMensagem}`, '_blank');
+            
+            // Tenta abrir o WhatsApp de forma otimizada para mobile e desktop
+            const whatsappUrl = `https://wa.me/?text=${urlMensagem}`;
+            window.open(whatsappUrl, '_blank');
         });
 
-        // Evento de troca de idioma
+        // EventListeners
         elSelectLang.addEventListener('change', (e) => {
             currentLang = e.target.value;
             atualizarIdiomaInterface();
         });
 
-        // Inicialização
+        // Init
         atualizarIdiomaInterface();
     </script>
 </body>
