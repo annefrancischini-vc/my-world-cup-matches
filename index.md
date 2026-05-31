@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -68,8 +66,8 @@
     </div>
 
     <script>
-        // URL da sua API no Google Apps Script integrada com sucesso!
-        const API_URL = "https://script.google.com/macros/s/AKfycbxViNJqBy_ECJjulYSF5IVv3IDOh7_AG7xHvmjAVLSEipN43kBtAfAtWpJC3cvJryIYbA/exec";
+        // --- AQUI ESTÁ A SUA NOVA URL DO APPS SCRIPT ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbzlc6yR-wP55fFgC8FvDnCw85ngwyTxQ4eFunKTfP9WitHjJ8Og38fC9YmT-WVklxJ-_w/exec";
 
         // Dicionário de Idiomas
         const i18n = {
