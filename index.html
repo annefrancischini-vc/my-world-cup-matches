@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Chalan:wght@700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-blue: #0A1931;       /* Deep iconic 2002 royal/navy blue */
+            --bg-blue: #0A1931;       /* Azul marinho icônico da camisa reserva de 2002 */
             --card-white: #FFFFFF;
-            --accent-neon: #CCFF00;   /* Vibrant neon yellow/green accent */
+            --accent-neon: #CCFF00;   /* Amarelo/verde limão neon */
             --text-dark: #121212;
             --text-muted: #666666;
-            --border-blue: #0052CC;   /* Classic CBF Royal Blue */
+            --border-blue: #0052CC;   /* Azul Royal CBF */
         }
 
         * {
@@ -90,7 +90,7 @@
             background: var(--card-white);
             color: var(--text-dark);
             margin-bottom: 16px;
-            border-radius: 0px; /* Sharp edges */
+            border-radius: 0px; /* Bordas secas conforme solicitado */
             border-left: 6px solid var(--border-blue);
             padding: 20px;
             display: flex;
@@ -194,7 +194,6 @@
             transform: rotate(45deg);
         }
 
-        /* Floating Action Bar */
         .action-bar {
             position: fixed;
             bottom: 0;
@@ -247,13 +246,13 @@
 
     <script>
         // ==========================================
-        // CONFIGURATION CONFIG
+        // CONFIGURAÇÕES LINKADAS
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbznFjiulxBBPihUQsRevdSkkTYNF4nDQ6p6jLbmYE0dHy2b8Qh35A2aVHMLw_Hio1Ph/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         // ==========================================
-        // LOCALIZATION DICTIONARIES
+        // SISTEMA DE TRADUÇÃO E ESTADO
         // ==========================================
         let currentLang = 'EN';
         let matchesData = [];
@@ -282,7 +281,7 @@
         };
 
         // ==========================================
-        // CORE APPLICATION LOGIC
+        // LÓGICA DO FRONTEND
         // ==========================================
         
         async function fetchMatches() {
@@ -290,14 +289,14 @@
                 const response = await fetch(API_URL);
                 matchesData = await response.json();
                 
-                // Sort chronologically
+                // Ordenação cronológica garantida
                 matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
                 
                 document.getElementById('loading-state').style.display = 'none';
                 renderMatches();
             } catch (error) {
                 console.error("Error fetching data: ", error);
-                document.getElementById('loading-state').innerText = "Failed to load matches. Please check configuration.";
+                document.getElementById('loading-state').innerText = "Failed to load matches. Please check API settings.";
             }
         }
 
@@ -306,7 +305,7 @@
             container.innerHTML = '';
 
             matchesData.forEach(match => {
-                // Time calculations dynamically shifted to Client Locale
+                // Conversão dinâmica para o fuso horário local do navegador do usuário
                 const matchDate = new Date(match.DateTime_UTC);
                 
                 const weekday = matchDate.toLocaleDateString(locales[currentLang], { weekday: 'long' });
@@ -365,7 +364,7 @@
         }
 
         // ==========================================
-        // WHATSAPP STRING GENERATOR
+        // GERADOR DA MENSAGEM DO WHATSAPP
         // ==========================================
         function shareToWhatsApp() {
             if (selectedMatches.size === 0) {
@@ -375,7 +374,6 @@
 
             let message = `${dictionary[currentLang].greeting}\n`;
             
-            // Loop preserving database chronological sorting orders
             matchesData.forEach(match => {
                 if (selectedMatches.has(match.ID.toString())) {
                     const matchDate = new Date(match.DateTime_UTC);
@@ -387,7 +385,7 @@
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    message += `• ${capitalizedWeekday}, ${dateStr} em ${timeStr} - ${team1} vs ${team2}\n`;
+                    message += `• ${capitalizedWeekday}, ${dateStr} às ${timeStr} - ${team1} vs ${team2}\n`;
                 }
             });
 
@@ -399,7 +397,7 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // Initialize App on load
+        // Inicializa o app chamando a API
         fetchMatches();
     </script>
 </body>
