@@ -63,45 +63,45 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--neon-lime);
-            margin: 20px 0 10px 0;
+            margin: 25px 0 10px 0;
             font-weight: 700;
         }
 
-        /* Container de Botões de Filtro Modernos */
-        .filter-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        /* Grid de Cards de Filtro Dinâmicos (Vindo do Sheets) */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
         }
 
-        .filter-btn {
-            background: rgba(255, 255, 255, 0.05);
+        .category-card {
+            background: var(--glass-card);
             border: 1px solid var(--glass-border);
             color: var(--text-primary);
-            padding: 8px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
             text-transform: capitalize;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .filter-btn:hover {
-            border-color: var(--neon-lime);
+        .category-card:hover {
+            border-color: rgba(204, 255, 0, 0.5);
         }
 
-        /* Estado ativo do botão de filtro (Selecionado) */
-        .filter-btn.active {
-            background: var(--neon-lime);
-            color: #020b18;
+        /* Card de categoria selecionado */
+        .category-card.active {
+            background: rgba(204, 255, 0, 0.15);
             border-color: var(--neon-lime);
-            box-shadow: 0 0 12px rgba(204, 255, 0, 0.3);
+            color: var(--neon-lime);
+            box-shadow: inset 0 0 12px rgba(204, 255, 0, 0.1);
         }
 
         #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 100px; }
@@ -165,16 +165,16 @@
     </header>
 
     <div id="mainContainer">
-        <div class="section-title" id="step1Title">Passo 1: Escolha Seleções ou Craques</div>
-        <p class="intro-text" id="filterIntro">Clique nos botões abaixo para filtrar os jogos disponíveis.</p>
+        <div class="section-title" id="step1Title">Passo 1: Selecione uma Categoria</div>
+        <p class="intro-text" id="filterIntro">Selecione os cards abaixo para filtrar os jogos disponíveis.</p>
         
-        <div class="filter-container" id="filterButtonsContainer">
+        <div class="filter-grid" id="filterCardsContainer">
             </div>
 
         <div class="section-title" id="step2Title">Passo 2: Selecione os Jogos</div>
         <p class="intro-text" id="editIntro">Marque os jogos que você quer assistir juntos.</p>
         
-        <div id="matchList">⚽ Carregando jogos do banco de dados...</div>
+        <div id="matchList">⚽ Carregando jogos...</div>
     </div>
 
     <div class="action-btn-container">
@@ -185,27 +185,21 @@
     </div>
 
     <script>
-        // ⚠️ SUAS CONFIGURAÇÕES (Lembre de colar os seus links aqui!)
+        // ⚠️ SUAS CONFIGURAÇÕES (Cole os seus links aqui!)
         const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
         const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
 
         let allMatches = [];
+        let uniqueCategories = [];
         let selectedFilters = new Set();
         let currentLang = 'en'; 
-
-        // Lista de filtros solicitados por você
-        const filterOptions = [
-            "brasil", "franca", "portugal", "espanha", "inglaterra", 
-            "alemanha", "marrocos", "argentina", "uruguai", "belgica", 
-            "colombia", "croacia", "holanda", "turquia", "haaland", "salah"
-        ];
 
         const dictionary = {
             en: {
                 title: "🏆 2026 Match Planner",
-                step1: "Step 1: Choose Squads or Stars",
-                filterIntro: "Tap the buttons below to instantly filter available matches.",
-                step2: "Step 2: Select the Matches",
+                step1: "Step 1: Select a Category Card",
+                filterIntro: "Tap the cards below to filter available matches.",
+                step2: "Step 2: Choose the Matches",
                 editIntro: "Check the boxes for the games you plan to watch.",
                 loading: "⚽ Loading schedule...",
                 btnText: "Share on WhatsApp",
@@ -215,8 +209,8 @@
             },
             pt: {
                 title: "🏆 Agenda Copa 2026",
-                step1: "Passo 1: Escolha Seleções ou Craques",
-                filterIntro: "Clique nos botões abaixo para filtrar os jogos disponíveis.",
+                step1: "Passo 1: Selecione uma Categoria",
+                filterIntro: "Selecione os cards abaixo para filtrar os jogos disponíveis.",
                 step2: "Passo 2: Selecione os Jogos",
                 editIntro: "Marque os jogos que você quer assistir com os amigos.",
                 loading: "⚽ Carregando jogos...",
@@ -234,14 +228,34 @@
 
         async function init() {
             updateUI();
-            generateFilterButtons();
             try {
                 const response = await fetch(API_URL);
                 allMatches = await response.json();
+                
+                // MÁGICA: Extrai todas as categorias de filtros direto da coluna da sua planilha automaticamente
+                extractCategoriesFromData();
+                
+                renderFilterCards();
                 renderSchedule();
             } catch (error) {
-                document.getElementById('matchList').innerHTML = `<div style="color:#ff4a4a; text-align:center;">⚠️ Erro ao carregar os dados. Verifique o link do Google Script.</div>`;
+                document.getElementById('matchList').innerHTML = `<div style="color:#ff4a4a; text-align:center;">⚠️ Erro ao carregar os dados. Verifique a API.</div>`;
             }
+        }
+
+        function extractCategoriesFromData() {
+            let categoriesSet = new Set();
+            allMatches.forEach(m => {
+                if (m.keywords) {
+                    // Separa os itens por vírgula, limpa os espaços e joga no Set
+                    m.keywords.split(',').forEach(keyword => {
+                        let cleanKeyword = keyword.trim().toLowerCase();
+                        if (cleanKeyword) {
+                            categoriesSet.add(cleanKeyword);
+                        }
+                    });
+                }
+            });
+            uniqueCategories = Array.from(categoriesSet).sort();
         }
 
         function toggleLanguage() {
@@ -260,28 +274,27 @@
             document.getElementById('btnText').innerText = dictionary[currentLang].btnText;
         }
 
-        // Cria os botões de clique na tela de forma limpa
-        function generateFilterButtons() {
-            const container = document.getElementById('filterButtonsContainer');
+        // Renderiza os Cards Visuais baseado nas categorias encontradas no Sheets
+        function renderFilterCards() {
+            const container = document.getElementById('filterCardsContainer');
             container.innerHTML = '';
             
-            filterOptions.forEach(filter => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.innerText = filter;
-                btn.onclick = () => handleFilterClick(filter, btn);
-                container.appendChild(btn);
+            uniqueCategories.forEach(category => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerText = category;
+                card.onclick = () => handleCardClick(category, card);
+                container.appendChild(card);
             });
         }
 
-        // Controla se o botão está ativado ou desativado (Multi-seleção)
-        function handleFilterClick(filter, btnElement) {
-            if (selectedFilters.has(filter)) {
-                selectedFilters.delete(filter);
-                btnElement.classList.remove('active');
+        function handleCardClick(category, cardElement) {
+            if (selectedFilters.has(category)) {
+                selectedFilters.delete(category);
+                cardElement.classList.remove('active');
             } else {
-                selectedFilters.add(filter);
-                btnElement.classList.add('active');
+                selectedFilters.add(category);
+                cardElement.classList.add('active');
             }
             renderSchedule();
         }
@@ -302,10 +315,8 @@
                 const away = currentLang === 'en' ? m.team2_en : m.team2_pt;
                 const timeData = getLocalTimeData(m.datetime_utc);
                 
-                // Texto compilado de busca do cartão
-                const cardKeywords = `${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()} ${m.stadium.toLowerCase()}`;
+                const cardKeywords = `${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()}`;
 
-                // Se houver filtros ativos, valida se o jogo atende a pelo menos um deles
                 let matchesFilter = true;
                 if (selectedFilters.size > 0) {
                     matchesFilter = false;
