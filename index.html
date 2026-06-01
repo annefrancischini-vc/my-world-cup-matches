@@ -1,74 +1,406 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .selected { border-color: #2563eb !important; background-color: #eff6ff; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Match Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chalan:wght@700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-blue: #0A1931;       /* Deep iconic 2002 royal/navy blue */
+            --card-white: #FFFFFF;
+            --accent-neon: #CCFF00;   /* Vibrant neon yellow/green accent */
+            --text-dark: #121212;
+            --text-muted: #666666;
+            --border-blue: #0052CC;   /* Classic CBF Royal Blue */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-blue);
+            color: var(--card-white);
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        header {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--card-white);
+        }
+
+        h1 span {
+            color: var(--accent-neon);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid var(--accent-neon);
+            color: var(--accent-neon);
+            padding: 8px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .lang-btn:hover {
+            background: var(--accent-neon);
+            color: var(--bg-blue);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--accent-neon);
+            font-weight: 600;
+        }
+
+        .match-card {
+            background: var(--card-white);
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            border-radius: 0px; /* Sharp edges */
+            border-left: 6px solid var(--border-blue);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .match-info {
+            flex-grow: 1;
+            padding-right: 20px;
+        }
+
+        .match-meta {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .group-badge {
+            background: var(--bg-blue);
+            color: var(--accent-neon);
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 2px;
+        }
+
+        .match-teams {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .match-stadium {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            cursor: pointer;
+            font-size: 22px;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: -12px;
+            right: 0;
+            height: 30px;
+            width: 30px;
+            background-color: #eee;
+            border: 2px solid var(--border-blue);
+            border-radius: 4px;
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--accent-neon);
+            border-color: var(--accent-neon);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 10px;
+            top: 5px;
+            width: 6px;
+            height: 12px;
+            border: solid var(--bg-blue);
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Floating Action Bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #061022;
+            padding: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .share-btn {
+            background: var(--accent-neon);
+            color: var(--bg-blue);
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            max-width: 760px;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(204, 255, 0, 0.3);
+            transition: transform 0.1s ease;
+        }
+
+        .share-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen pb-24">
-  <div id="app" class="p-4">
-    <h1 class="text-2xl font-black text-gray-900 mb-6">O que você quer assistir?</h1>
-    
-    <div id="loader" class="text-center py-10 text-gray-500 font-bold">Carregando seleções...</div>
-    <div id="grid" class="grid grid-cols-2 gap-3"></div>
-    
-    <button id="btnVer" class="hidden w-full fixed bottom-0 left-0 p-5 bg-blue-600 text-white font-bold text-lg shadow-2xl transition-all" onclick="showMatches()">VER MATCHES</button>
-  </div>
+<body>
 
-  <div id="listaArea" class="hidden p-4">
-    <h2 id="tituloSelecao" class="text-xl font-bold mb-4"></h2>
-    <div id="listaMatches" class="space-y-3"></div>
-    <button id="btnZap" class="hidden w-full fixed bottom-0 left-0 p-5 bg-green-500 text-white font-bold text-lg shadow-2xl" onclick="enviarZap()">ENVIAR NO WHATSAPP</button>
-  </div>
+    <header>
+        <h1 id="app-title">2026 <span>MATCH PLANNER</span></h1>
+        <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()">PT 🇧🇷</button>
+    </header>
 
-  <script>
-    let allData = {}, selectedFilter = "";
-    
-    fetch("https://script.google.com/macros/s/AKfycby0E6vn9wf-loJiqwh9rEJzf9VfHTf1Te8iOPlh3PCG-vqdfdFREH9ITpPN7f5kBqP7/exec")
-      .then(r => r.json())
-      .then(d => {
-        document.getElementById('loader').classList.add('hidden');
-        allData = d;
-        const grid = document.getElementById('grid');
-        d.filters.forEach(f => {
-          grid.innerHTML += `<div onclick="select('${f}', this)" class="bg-white p-6 rounded-2xl border-4 border-white shadow-md cursor-pointer text-center font-bold text-lg">${f}</div>`;
-        });
-      });
+    <main>
+        <div id="loading-state" class="loading">Loading world cup matches...</div>
+        <div id="matches-container"></div>
+    </main>
 
-    function select(f, el) {
-      selectedFilter = f;
-      document.querySelectorAll('#grid div').forEach(d => d.classList.remove('selected'));
-      el.classList.add('selected');
-      document.getElementById('btnVer').classList.remove('hidden');
-    }
+    <div class="action-bar">
+        <button class="share-btn" id="share-btn" onclick="shareToWhatsApp()">Share List on WhatsApp (0)</button>
+    </div>
 
-    function showMatches() {
-      document.getElementById('app').classList.add('hidden');
-      document.getElementById('listaArea').classList.remove('hidden');
-      document.getElementById('tituloSelecao').innerText = "Jogos: " + selectedFilter;
-      
-      const list = allData.matches.filter(m => m.filter === selectedFilter);
-      const container = document.getElementById('listaMatches');
-      container.innerHTML = "";
-      
-      list.forEach(m => {
-        container.innerHTML += `
-          <label class="block bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4">
-            <input type="checkbox" class="match-check w-6 h-6" value="${m.t1} x ${m.t2}"> 
-            <span class="font-bold text-lg">${m.t1} <span class="text-gray-400">x</span> ${m.t2}</span>
-          </label>`;
-      });
-      document.getElementById('btnZap').classList.remove('hidden');
-    }
+    <script>
+        // ==========================================
+        // CONFIGURATION CONFIG
+        // ==========================================
+        const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+        const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_LIVE_URL";
 
-    function enviarZap() {
-      let jogos = Array.from(document.querySelectorAll('.match-check:checked')).map(c => c.value).join('%0A');
-      if (!jogos) return alert("Selecione pelo menos um jogo!");
-      window.open(`https://wa.me/?text=Quero assistir aos jogos:%0A${jogos}`);
-    }
-  </script>
+        // ==========================================
+        // LOCALIZATION DICTIONARIES
+        // ==========================================
+        let currentLang = 'EN';
+        let matchesData = [];
+        const selectedMatches = new Set();
+
+        const dictionary = {
+            EN: {
+                title: "2026 <span>MATCH PLANNER</span>",
+                loading: "Loading world cup matches...",
+                shareBtn: "Share List on WhatsApp",
+                greeting: "Hello! Let's watch these matches?",
+                footerMsg: "Plan yours here: "
+            },
+            PT: {
+                title: "2026 <span>PROGRAMADOR DE JOGOS</span>",
+                loading: "Carregando jogos da copa...",
+                shareBtn: "Compartilhar Lista no WhatsApp",
+                greeting: "Olá! Vamos assistir a esses jogos?",
+                footerMsg: "Monte a sua programação aqui: "
+            }
+        };
+
+        const locales = {
+            EN: 'en-US',
+            PT: 'pt-BR'
+        };
+
+        // ==========================================
+        // CORE APPLICATION LOGIC
+        // ==========================================
+        
+        async function fetchMatches() {
+            try {
+                const response = await fetch(API_URL);
+                matchesData = await response.json();
+                
+                // Sort chronologically
+                matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
+                
+                document.getElementById('loading-state').style.display = 'none';
+                renderMatches();
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+                document.getElementById('loading-state').innerText = "Failed to load matches. Please check configuration.";
+            }
+        }
+
+        function renderMatches() {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = '';
+
+            matchesData.forEach(match => {
+                // Time calculations dynamically shifted to Client Locale
+                const matchDate = new Date(match.DateTime_UTC);
+                
+                const weekday = matchDate.toLocaleDateString(locales[currentLang], { weekday: 'long' });
+                const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric', year: 'numeric' });
+                const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+                const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+                
+                const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
+                const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
+
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.innerHTML = `
+                    <div class="match-info">
+                        <div class="match-meta">
+                            <span>${capitalizedWeekday}, ${dateStr} @ ${timeStr}</span>
+                            <span class="group-badge">GRP ${match.Group}</span>
+                        </div>
+                        <div class="match-teams">${team1} VS ${team2}</div>
+                        <div class="match-stadium">${match.Stadium}</div>
+                    </div>
+                    <div>
+                        <label class="checkbox-container">
+                            <input type="checkbox" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            updateShareButtonText();
+        }
+
+        function handleSelect(checkbox) {
+            const id = checkbox.getAttribute('data-id');
+            if (checkbox.checked) {
+                selectedMatches.add(id);
+            } else {
+                selectedMatches.delete(id);
+            }
+            updateShareButtonText();
+        }
+
+        function updateShareButtonText() {
+            const count = selectedMatches.size;
+            const textBase = dictionary[currentLang].shareBtn;
+            document.getElementById('share-btn').innerText = `${textBase} (${count})`;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'EN' ? 'PT' : 'EN';
+            document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
+            document.getElementById('app-title').innerHTML = dictionary[currentLang].title;
+            renderMatches();
+        }
+
+        // ==========================================
+        // WHATSAPP STRING GENERATOR
+        // ==========================================
+        function shareToWhatsApp() {
+            if (selectedMatches.size === 0) {
+                alert(currentLang === 'EN' ? "Please select at least one match first!" : "Por favor, selecione pelo menos um jogo primeiro!");
+                return;
+            }
+
+            let message = `${dictionary[currentLang].greeting}\n`;
+            
+            // Loop preserving database chronological sorting orders
+            matchesData.forEach(match => {
+                if (selectedMatches.has(match.ID.toString())) {
+                    const matchDate = new Date(match.DateTime_UTC);
+                    const weekday = matchDate.toLocaleDateString(locales[currentLang], { weekday: 'long' });
+                    const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                    const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    
+                    const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+                    const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
+                    const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
+
+                    message += `• ${capitalizedWeekday}, ${dateStr} em ${timeStr} - ${team1} vs ${team2}\n`;
+                }
+            });
+
+            message += `\n${dictionary[currentLang].footerMsg}${GITHUB_PAGES_URL}`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize App on load
+        fetchMatches();
+    </script>
 </body>
 </html>
