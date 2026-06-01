@@ -4,51 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .selected { border-color: #2563eb !important; background-color: #eff6ff; }
+  </style>
 </head>
-<body class="bg-gray-100 p-4">
-  <h1 class="text-xl font-bold mb-4">O que você quer assistir?</h1>
-  <div id="grid" class="grid grid-cols-2 gap-3 mb-20"></div>
-  
-  <button id="btnVer" class="hidden fixed bottom-5 left-5 right-5 bg-blue-600 text-white p-4 rounded-xl font-bold shadow-lg" onclick="showMatches()">Ver Matches</button>
+<body class="bg-gray-50 min-h-screen pb-24">
+  <div id="app" class="p-4">
+    <h1 class="text-2xl font-black text-gray-900 mb-6">O que você quer assistir?</h1>
+    
+    <div id="loader" class="text-center py-10 text-gray-500 font-bold">Carregando seleções...</div>
+    <div id="grid" class="grid grid-cols-2 gap-3"></div>
+    
+    <button id="btnVer" class="hidden w-full fixed bottom-0 left-0 p-5 bg-blue-600 text-white font-bold text-lg shadow-2xl transition-all" onclick="showMatches()">VER MATCHES</button>
+  </div>
 
-  <div id="listaMatches" class="hidden space-y-3 pb-20"></div>
-  <button id="btnZap" class="hidden fixed bottom-5 left-5 right-5 bg-green-500 text-white p-4 rounded-xl font-bold shadow-lg" onclick="enviarZap()">Enviar pelo WhatsApp</button>
+  <div id="listaArea" class="hidden p-4">
+    <h2 id="tituloSelecao" class="text-xl font-bold mb-4"></h2>
+    <div id="listaMatches" class="space-y-3"></div>
+    <button id="btnZap" class="hidden w-full fixed bottom-0 left-0 p-5 bg-green-500 text-white font-bold text-lg shadow-2xl" onclick="enviarZap()">ENVIAR NO WHATSAPP</button>
+  </div>
 
   <script>
     let allData = {}, selectedFilter = "";
-
-    // SEU LINK DO GOOGLE SCRIPT AQUI
-    fetch("https://script.google.com/macros/s/AKfycbxaC79CP79z3285sd2PYClBfQvkK6W0GaRSS0sVsueuJ0-ANwdOAvPQ9CDfIDi6Rhlz/exec")
+    
+    fetch("SEU_LINK_EXEC_AQUI")
       .then(r => r.json())
       .then(d => {
+        document.getElementById('loader').classList.add('hidden');
         allData = d;
         const grid = document.getElementById('grid');
         d.filters.forEach(f => {
-          grid.innerHTML += `<div onclick="select('${f}', this)" class="bg-white p-4 rounded-xl border-2 cursor-pointer text-center font-medium">${f}</div>`;
+          grid.innerHTML += `<div onclick="select('${f}', this)" class="bg-white p-6 rounded-2xl border-4 border-white shadow-md cursor-pointer text-center font-bold text-lg">${f}</div>`;
         });
       });
 
     function select(f, el) {
       selectedFilter = f;
-      document.querySelectorAll('#grid div').forEach(d => d.classList.remove('border-blue-500'));
-      el.classList.add('border-blue-500');
+      document.querySelectorAll('#grid div').forEach(d => d.classList.remove('selected'));
+      el.classList.add('selected');
       document.getElementById('btnVer').classList.remove('hidden');
     }
 
     function showMatches() {
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('listaArea').classList.remove('hidden');
+      document.getElementById('tituloSelecao').innerText = "Jogos: " + selectedFilter;
+      
       const list = allData.matches.filter(m => m.filter === selectedFilter);
-      let html = `<h2 class="text-xl font-bold my-4">Jogos de ${selectedFilter}</h2>`;
+      const container = document.getElementById('listaMatches');
+      container.innerHTML = "";
+      
       list.forEach(m => {
-        html += `<div class="bg-white p-4 rounded-lg flex items-center gap-3 border shadow-sm">
-                   <input type="checkbox" class="match-check w-5 h-5" value="${m.t1} x ${m.t2}"> 
-                   <span class="text-sm">${m.t1} x ${m.t2}</span>
-                 </div>`;
+        container.innerHTML += `
+          <label class="block bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4">
+            <input type="checkbox" class="match-check w-6 h-6" value="${m.t1} x ${m.t2}"> 
+            <span class="font-bold text-lg">${m.t1} <span class="text-gray-400">x</span> ${m.t2}</span>
+          </label>`;
       });
-      document.getElementById('listaMatches').innerHTML = html;
-      document.getElementById('listaMatches').classList.remove('hidden');
       document.getElementById('btnZap').classList.remove('hidden');
-      document.getElementById('grid').classList.add('hidden');
-      document.getElementById('btnVer').classList.add('hidden');
     }
 
     function enviarZap() {
