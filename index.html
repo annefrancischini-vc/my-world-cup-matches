@@ -67,22 +67,22 @@
             font-weight: 700;
         }
 
-        /* Classes de Controle de Fluxo por Telas */
+        /* 👑 CONTROLE ESTRITO DE TELAS (Isola completamente o conteúdo) */
         .app-screen {
-            display: none;
+            display: none !important;
         }
         .app-screen.active {
-            display: block;
+            display: block !important;
         }
 
-        /* Voltar link */
+        /* Botão discreto para voltar */
         .back-btn {
             background: transparent;
             border: none;
             color: var(--text-secondary);
             font-size: 14px;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -92,12 +92,12 @@
             color: var(--neon-lime);
         }
 
-        /* Grid de Cards de Filtro Dinâmicos */
+        /* Grid de Cards de Filtro Dinâmicos (Tela 1) */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 110px; /* Margem para não sumir atrás do botão fixo */
+            margin-bottom: 120px;
         }
 
         .category-card {
@@ -125,8 +125,8 @@
             box-shadow: inset 0 0 12px rgba(204, 255, 0, 0.1);
         }
 
-        /* Lista de partidas */
-        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 110px; }
+        /* Lista de partidas (Tela 2) */
+        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 120px; }
 
         .match-card { 
             background: var(--glass-card);
@@ -205,64 +205,64 @@
     <div id="mainContainer">
         
         <div id="screenFilters" class="app-screen active">
-            <div class="section-title" id="step1Title">Passo 1: Selecione uma Categoria</div>
-            <p class="intro-text" id="filterIntro">Selecione os cards abaixo para filtrar as seleções ou craques.</p>
+            <div class="section-title" id="step1Title">Selecione o que você quer assistir</div>
+            <p class="intro-text" id="filterIntro">Escolha as seleções ou craques favoritos nos cards abaixo.</p>
             <div class="filter-grid" id="filterCardsContainer">
                 </div>
         </div>
 
         <div id="screenMatches" class="app-screen">
             <button class="back-btn" onclick="navigateToScreen(1)">← <span id="backBtnText">Alterar filtros</span></button>
-            <div class="section-title" id="step2Title">Passo 2: Selecione os Jogos</div>
-            <p class="intro-text" id="editIntro">Marque os jogos que você planeja assistir.</p>
-            <div id="matchList">⚽ Carregando jogos...</div>
+            <div class="section-title" id="step2Title">Selecione as partidas</div>
+            <p class="intro-text" id="editIntro">Marque os jogos abaixo para montar sua agenda.</p>
+            <div id="matchList">⚽ Buscando confrontos...</div>
         </div>
 
     </div>
 
     <div class="action-btn-container">
         <button class="action-btn next-step-style" onclick="goToMatchesScreen()" id="footerActionBtn">
-            <span id="btnText">Ver Partidas</span>
+            <span id="btnText">Ver Jogos</span>
         </button>
     </div>
 
     <script>
-        // ⚠️ SUAS CONFIGURAÇÕES (Lembre de colar os seus links aqui!)
-        const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
-        const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
+        // ⚠️ SUAS CONFIGURAÇÕES TÉCNICAS REAIS
+        const API_URL = "https://script.google.com/macros/s/AKfycbxaCgzAfugHU1lwiH8avtAXAwPj4zJQ5ZKfl6vcpAZZXlzwAIQs-Cay-cUQfPtb-Xwb/exec"; 
+        const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/"; 
 
         let allMatches = [];
         let uniqueCategories = [];
         let selectedFilters = new Set();
-        let currentLang = 'en'; 
+        let currentLang = 'pt'; // Definido PT-BR como inicial nativo
         let activeScreen = 1;
 
         const dictionary = {
             en: {
                 title: "🏆 2026 Match Planner",
-                step1: "Step 1: Select a Category",
-                filterIntro: "Tap the cards below to filter available matches.",
-                step2: "Step 2: Choose the Matches",
-                editIntro: "Check the boxes for the games you plan to watch.",
-                backBtn: "Change filters",
-                btnViewMatches: "View Matches",
+                step1: "Select what you want to watch",
+                filterIntro: "Choose your favorite teams or star players below.",
+                step2: "Select the matches",
+                editIntro: "Check the boxes for the games you want to save.",
+                backBtn: "Back to choices",
+                btnViewMatches: "View Games",
                 btnShareWhatsApp: "Share on WhatsApp",
-                alertSelectFilter: "Please select at least one category card first!",
+                alertSelectFilter: "Please select at least one choice first!",
                 alertSelectMatch: "Please select at least one match first!",
                 wpGreeting: "Hello! Let's watch these matches?\n",
                 wpFooter: "\nPlan yours here: ",
-                noMatches: "No matches found for the selected filters."
+                noMatches: "No matches found for the selected choices."
             },
             pt: {
                 title: "🏆 Agenda Copa 2026",
-                step1: "Passo 1: Selecione uma Categoria",
-                filterIntro: "Selecione os cards abaixo para filtrar as seleções ou craques.",
-                step2: "Passo 2: Selecione os Jogos",
-                editIntro: "Marque os jogos que você quer assistir com os amigos.",
-                backBtn: "Alterar filtros",
-                btnViewMatches: "Ver Partidas",
-                btnShareWhatsApp: "Enviar para o WhatsApp",
-                alertSelectFilter: "Por favor, selecione pelo menos uma categoria primeiro!",
+                step1: "Selecione o que você quer assistir",
+                filterIntro: "Escolha as seleções ou craques favoritos nos cards abaixo.",
+                step2: "Selecione as partidas",
+                editIntro: "Marque os jogos abaixo para montar sua agenda.",
+                backBtn: "Voltar para escolhas",
+                btnViewMatches: "Ver Jogos",
+                btnShareWhatsApp: "Compartilhar no WhatsApp",
+                alertSelectFilter: "Por favor, selecione pelo menos uma opção primeiro!",
                 alertSelectMatch: "Por favor, selecione pelo menos um jogo!",
                 wpGreeting: "Olá! Bora assistir a esses jogos?\n",
                 wpFooter: "\nMonte sua agenda aqui: ",
@@ -283,7 +283,7 @@
                 extractCategoriesFromData();
                 renderFilterCards();
             } catch (error) {
-                document.getElementById('filterCardsContainer').innerHTML = `<div style="color:#ff4a4a; text-align:center; grid-column: 1 / -1;">⚠️ Erro ao carregar os dados. Verifique a API.</div>`;
+                document.getElementById('filterCardsContainer').innerHTML = `<div style="color:#ff4a4a; text-align:center; grid-column:1/-1;">⚠️ Erro de conexão com o banco de dados.</div>`;
             }
         }
 
@@ -315,7 +315,6 @@
             document.getElementById('editIntro').innerText = dictionary[currentLang].editIntro;
             document.getElementById('backBtnText').innerText = dictionary[currentLang].backBtn;
             
-            // Atualiza o texto do botão do rodapé com base na tela ativa
             const actionBtn = document.getElementById('footerActionBtn');
             if (activeScreen === 1) {
                 document.getElementById('btnText').innerText = dictionary[currentLang].btnViewMatches;
@@ -354,21 +353,17 @@
                 document.getElementById('screenMatches').classList.remove('active');
                 document.getElementById('screenFilters').classList.add('active');
                 
-                // Transiciona o botão de volta ao estilo neon do passo 1
                 btn.className = "action-btn next-step-style";
                 btn.onclick = goToMatchesScreen;
-                // Remove ícone do whats se houver
                 const img = btn.querySelector('img');
                 if (img) img.remove();
             } else {
                 document.getElementById('screenFilters').classList.remove('active');
                 document.getElementById('screenMatches').classList.add('active');
                 
-                // Transiciona o botão para o estilo oficial verde do WhatsApp
                 btn.className = "action-btn whatsapp-style";
                 btn.onclick = shareOnWhatsApp;
                 
-                // Insere dinamicamente o ícone SVG do WhatsApp
                 if (!btn.querySelector('img')) {
                     const img = document.createElement('img');
                     img.src = "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg";
