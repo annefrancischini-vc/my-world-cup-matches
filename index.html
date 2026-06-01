@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,29 +56,55 @@
             cursor: pointer;
         }
 
-        /* Modern Filter Search Input */
-        .search-container {
-            margin-bottom: 20px;
-        }
-        .search-bar {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-        .search-bar:focus {
-            border-color: var(--neon-lime);
-            box-shadow: 0 0 12px rgba(204, 255, 0, 0.2);
+        .intro-text { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 15px; }
+        
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-lime);
+            margin: 20px 0 10px 0;
+            font-weight: 700;
         }
 
-        .intro-text { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
-        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 90px; }
+        /* Container de Botões de Filtro Modernos */
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: capitalize;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--neon-lime);
+        }
+
+        /* Estado ativo do botão de filtro (Selecionado) */
+        .filter-btn.active {
+            background: var(--neon-lime);
+            color: #020b18;
+            border-color: var(--neon-lime);
+            box-shadow: 0 0 12px rgba(204, 255, 0, 0.3);
+        }
+
+        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 100px; }
 
         .match-card { 
             background: var(--glass-card);
@@ -89,6 +115,7 @@
             display: flex; 
             align-items: center; 
             border: 1px solid var(--glass-border);
+            transition: all 0.2s ease;
         }
 
         .match-card input[type="checkbox"] { 
@@ -138,35 +165,48 @@
     </header>
 
     <div id="mainContainer">
-        <p class="intro-text" id="editIntro">Select the matches you plan to watch, then share the schedule with your friends on WhatsApp.</p>
+        <div class="section-title" id="step1Title">Passo 1: Escolha Seleções ou Craques</div>
+        <p class="intro-text" id="filterIntro">Clique nos botões abaixo para filtrar os jogos disponíveis.</p>
         
-        <div class="search-container">
-            <input type="text" id="searchBar" class="search-bar" onkeyup="filterMatches()" placeholder="🔍 Search squad, player or stadium...">
-        </div>
+        <div class="filter-container" id="filterButtonsContainer">
+            </div>
 
-        <div id="matchList">⚽ Loading schedule...</div>
+        <div class="section-title" id="step2Title">Passo 2: Selecione os Jogos</div>
+        <p class="intro-text" id="editIntro">Marque os jogos que você quer assistir juntos.</p>
+        
+        <div id="matchList">⚽ Carregando jogos do banco de dados...</div>
     </div>
 
     <div class="action-btn-container">
         <button class="action-btn" onclick="shareOnWhatsApp()" id="shareBtn">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-            <span id="btnText">Share on WhatsApp</span>
+            <span id="btnText">Enviar para o WhatsApp</span>
         </button>
     </div>
 
     <script>
-        // ⚠️ CUSTOM CONFIGURATIONS
+        // ⚠️ SUAS CONFIGURAÇÕES (Lembre de colar os seus links aqui!)
         const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
         const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
 
         let allMatches = [];
+        let selectedFilters = new Set();
         let currentLang = 'en'; 
+
+        // Lista de filtros solicitados por você
+        const filterOptions = [
+            "brasil", "franca", "portugal", "espanha", "inglaterra", 
+            "alemanha", "marrocos", "argentina", "uruguai", "belgica", 
+            "colombia", "croacia", "holanda", "turquia", "haaland", "salah"
+        ];
 
         const dictionary = {
             en: {
                 title: "🏆 2026 Match Planner",
-                editIntro: "Select the matches you plan to watch, then share the schedule with your friends on WhatsApp.",
-                searchPlaceholder: "🔍 Search squad, player or stadium...",
+                step1: "Step 1: Choose Squads or Stars",
+                filterIntro: "Tap the buttons below to instantly filter available matches.",
+                step2: "Step 2: Select the Matches",
+                editIntro: "Check the boxes for the games you plan to watch.",
                 loading: "⚽ Loading schedule...",
                 btnText: "Share on WhatsApp",
                 alertSelect: "Please select at least one match first!",
@@ -175,10 +215,12 @@
             },
             pt: {
                 title: "🏆 Agenda Copa 2026",
-                editIntro: "Selecione os jogos que você quer assistir e envie a lista organizada para seus amigos no WhatsApp.",
-                searchPlaceholder: "🔍 Buscar seleção, jogador ou estádio...",
+                step1: "Passo 1: Escolha Seleções ou Craques",
+                filterIntro: "Clique nos botões abaixo para filtrar os jogos disponíveis.",
+                step2: "Passo 2: Selecione os Jogos",
+                editIntro: "Marque os jogos que você quer assistir com os amigos.",
                 loading: "⚽ Carregando jogos...",
-                btnText: "Compartilhar no WhatsApp",
+                btnText: "Enviar para o WhatsApp",
                 alertSelect: "Por favor, selecione pelo menos um jogo!",
                 wpGreeting: "Olá! Bora assistir a esses jogos?\n",
                 wpFooter: "\nMonte sua agenda aqui: "
@@ -192,12 +234,13 @@
 
         async function init() {
             updateUI();
+            generateFilterButtons();
             try {
                 const response = await fetch(API_URL);
                 allMatches = await response.json();
                 renderSchedule();
             } catch (error) {
-                document.getElementById('matchList').innerHTML = `<div style="color:#ff4a4a; text-align:center;">⚠️ Error loading schedule data. Check your Google Script configuration.</div>`;
+                document.getElementById('matchList').innerHTML = `<div style="color:#ff4a4a; text-align:center;">⚠️ Erro ao carregar os dados. Verifique o link do Google Script.</div>`;
             }
         }
 
@@ -210,9 +253,37 @@
 
         function updateUI() {
             document.getElementById('appTitle').innerText = dictionary[currentLang].title;
+            document.getElementById('step1Title').innerText = dictionary[currentLang].step1;
+            document.getElementById('filterIntro').innerText = dictionary[currentLang].filterIntro;
+            document.getElementById('step2Title').innerText = dictionary[currentLang].step2;
             document.getElementById('editIntro').innerText = dictionary[currentLang].editIntro;
-            document.getElementById('searchBar').placeholder = dictionary[currentLang].searchPlaceholder;
             document.getElementById('btnText').innerText = dictionary[currentLang].btnText;
+        }
+
+        // Cria os botões de clique na tela de forma limpa
+        function generateFilterButtons() {
+            const container = document.getElementById('filterButtonsContainer');
+            container.innerHTML = '';
+            
+            filterOptions.forEach(filter => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.innerText = filter;
+                btn.onclick = () => handleFilterClick(filter, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        // Controla se o botão está ativado ou desativado (Multi-seleção)
+        function handleFilterClick(filter, btnElement) {
+            if (selectedFilters.has(filter)) {
+                selectedFilters.delete(filter);
+                btnElement.classList.remove('active');
+            } else {
+                selectedFilters.add(filter);
+                btnElement.classList.add('active');
+            }
+            renderSchedule();
         }
 
         function getLocalTimeData(isoString) {
@@ -225,40 +296,42 @@
 
         function renderSchedule() {
             let html = '';
+            
             allMatches.forEach(m => {
                 const home = currentLang === 'en' ? m.team1_en : m.team1_pt;
                 const away = currentLang === 'en' ? m.team2_en : m.team2_pt;
                 const timeData = getLocalTimeData(m.datetime_utc);
+                
+                // Texto compilado de busca do cartão
+                const cardKeywords = `${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()} ${m.stadium.toLowerCase()}`;
 
-                html += `
-                    <div class="match-card" data-keywords="${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()} ${m.stadium.toLowerCase()}">
-                        <input type="checkbox" value="${m.id}" class="match-cb" id="match-${m.id}">
-                        <div class="match-info">
-                            <div class="teams">${home} × ${away}</div>
-                            <div class="meta-data">
-                                📅 <strong>${timeData.weekday}</strong>, ${timeData.localDate} | ⏰ ${timeData.localTime}<br>
-                                📍 ${m.stadium} <span class="badge-group">${m.group}</span>
+                // Se houver filtros ativos, valida se o jogo atende a pelo menos um deles
+                let matchesFilter = true;
+                if (selectedFilters.size > 0) {
+                    matchesFilter = false;
+                    selectedFilters.forEach(f => {
+                        if (cardKeywords.includes(f)) {
+                            matchesFilter = true;
+                        }
+                    });
+                }
+
+                if (matchesFilter) {
+                    html += `
+                        <div class="match-card">
+                            <input type="checkbox" value="${m.id}" class="match-cb" id="match-${m.id}">
+                            <div class="match-info">
+                                <div class="teams">${home} × ${away}</div>
+                                <div class="meta-data">
+                                    📅 <strong>${timeData.weekday}</strong>, ${timeData.localDate} | ⏰ ${timeData.localTime}<br>
+                                    📍 ${m.stadium} <span class="badge-group">${m.group}</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('matchList').innerHTML = html;
-            filterMatches(); // Keep current text filter if language changes
-        }
-
-        // Live filtering logic
-        function filterMatches() {
-            const query = document.getElementById('searchBar').value.toLowerCase();
-            const cards = document.querySelectorAll('.match-card');
-            
-            cards.forEach(card => {
-                const keywords = card.getAttribute('data-keywords');
-                if (keywords.includes(query)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
+                        </div>`;
                 }
             });
+
+            document.getElementById('matchList').innerHTML = html || `<div style="text-align:center; color: var(--text-secondary); padding: 20px;">Nenhum jogo encontrado para os filtros selecionados.</div>`;
         }
 
         function shareOnWhatsApp() {
