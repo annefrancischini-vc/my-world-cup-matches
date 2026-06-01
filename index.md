@@ -129,8 +129,8 @@
 
     <script>
         // ⚠️ CUSTOM CONFIGURATIONS
-        const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
-        const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxaCgzAfugHU1lwiH8avtAXAwPj4zJQ5ZKfl6vcpAZZXlzwAIQs-Cay-cUQfPtb-Xwb/exec"; 
+        const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/"; 
 
         let allMatches = [];
         let currentLang = 'en'; 
