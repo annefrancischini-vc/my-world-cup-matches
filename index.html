@@ -63,16 +63,41 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--neon-lime);
-            margin: 25px 0 10px 0;
+            margin: 10px 0 10px 0;
             font-weight: 700;
         }
 
-        /* Grid de Cards de Filtro Dinâmicos (Vindo do Sheets) */
+        /* Classes de Controle de Fluxo por Telas */
+        .app-screen {
+            display: none;
+        }
+        .app-screen.active {
+            display: block;
+        }
+
+        /* Voltar link */
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0;
+        }
+        .back-btn:hover {
+            color: var(--neon-lime);
+        }
+
+        /* Grid de Cards de Filtro Dinâmicos */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 110px; /* Margem para não sumir atrás do botão fixo */
         }
 
         .category-card {
@@ -87,16 +112,12 @@
             font-size: 14px;
             text-transform: capitalize;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .category-card:hover {
             border-color: rgba(204, 255, 0, 0.5);
         }
 
-        /* Card de categoria selecionado */
         .category-card.active {
             background: rgba(204, 255, 0, 0.15);
             border-color: var(--neon-lime);
@@ -104,7 +125,8 @@
             box-shadow: inset 0 0 12px rgba(204, 255, 0, 0.1);
         }
 
-        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 100px; }
+        /* Lista de partidas */
+        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 110px; }
 
         .match-card { 
             background: var(--glass-card);
@@ -115,7 +137,6 @@
             display: flex; 
             align-items: center; 
             border: 1px solid var(--glass-border);
-            transition: all 0.2s ease;
         }
 
         .match-card input[type="checkbox"] { 
@@ -142,6 +163,7 @@
             border: 1px solid rgba(10, 88, 202, 0.3);
         }
 
+        /* Container Flutuante do Rodapé */
         .action-btn-container {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: linear-gradient(transparent, #020b18 30%);
@@ -150,10 +172,26 @@
         }
 
         button.action-btn { 
-            background: #25D366; color: white; border: none; padding: 14px 28px; 
+            border: none; padding: 14px 28px; 
             font-size: 16px; font-weight: 700; border-radius: 99px; cursor: pointer; width: 100%; 
-            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            transition: all 0.2s ease;
         }
+
+        /* Estilo do Botão do Passo 1 */
+        button.action-btn.next-step-style {
+            background: var(--neon-lime);
+            color: #020b18;
+            box-shadow: 0 8px 24px rgba(204, 255, 0, 0.2);
+        }
+
+        /* Estilo do Botão do WhatsApp */
+        button.action-btn.whatsapp-style {
+            background: #25D366; 
+            color: white;
+            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+        }
+
         button.action-btn img { width: 22px; height: 22px; }
     </style>
 </head>
@@ -165,27 +203,31 @@
     </header>
 
     <div id="mainContainer">
-        <div class="section-title" id="step1Title">Passo 1: Selecione uma Categoria</div>
-        <p class="intro-text" id="filterIntro">Selecione os cards abaixo para filtrar os jogos disponíveis.</p>
         
-        <div class="filter-grid" id="filterCardsContainer">
-            </div>
+        <div id="screenFilters" class="app-screen active">
+            <div class="section-title" id="step1Title">Passo 1: Selecione uma Categoria</div>
+            <p class="intro-text" id="filterIntro">Selecione os cards abaixo para filtrar as seleções ou craques.</p>
+            <div class="filter-grid" id="filterCardsContainer">
+                </div>
+        </div>
 
-        <div class="section-title" id="step2Title">Passo 2: Selecione os Jogos</div>
-        <p class="intro-text" id="editIntro">Marque os jogos que você quer assistir juntos.</p>
-        
-        <div id="matchList">⚽ Carregando jogos...</div>
+        <div id="screenMatches" class="app-screen">
+            <button class="back-btn" onclick="navigateToScreen(1)">← <span id="backBtnText">Alterar filtros</span></button>
+            <div class="section-title" id="step2Title">Passo 2: Selecione os Jogos</div>
+            <p class="intro-text" id="editIntro">Marque os jogos que você planeja assistir.</p>
+            <div id="matchList">⚽ Carregando jogos...</div>
+        </div>
+
     </div>
 
     <div class="action-btn-container">
-        <button class="action-btn" onclick="shareOnWhatsApp()" id="shareBtn">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-            <span id="btnText">Enviar para o WhatsApp</span>
+        <button class="action-btn next-step-style" onclick="goToMatchesScreen()" id="footerActionBtn">
+            <span id="btnText">Ver Partidas</span>
         </button>
     </div>
 
     <script>
-        // ⚠️ SUAS CONFIGURAÇÕES (Cole os seus links aqui!)
+        // ⚠️ SUAS CONFIGURAÇÕES (Lembre de colar os seus links aqui!)
         const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
         const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
 
@@ -193,31 +235,38 @@
         let uniqueCategories = [];
         let selectedFilters = new Set();
         let currentLang = 'en'; 
+        let activeScreen = 1;
 
         const dictionary = {
             en: {
                 title: "🏆 2026 Match Planner",
-                step1: "Step 1: Select a Category Card",
+                step1: "Step 1: Select a Category",
                 filterIntro: "Tap the cards below to filter available matches.",
                 step2: "Step 2: Choose the Matches",
                 editIntro: "Check the boxes for the games you plan to watch.",
-                loading: "⚽ Loading schedule...",
-                btnText: "Share on WhatsApp",
-                alertSelect: "Please select at least one match first!",
+                backBtn: "Change filters",
+                btnViewMatches: "View Matches",
+                btnShareWhatsApp: "Share on WhatsApp",
+                alertSelectFilter: "Please select at least one category card first!",
+                alertSelectMatch: "Please select at least one match first!",
                 wpGreeting: "Hello! Let's watch these matches?\n",
-                wpFooter: "\nPlan yours here: "
+                wpFooter: "\nPlan yours here: ",
+                noMatches: "No matches found for the selected filters."
             },
             pt: {
                 title: "🏆 Agenda Copa 2026",
                 step1: "Passo 1: Selecione uma Categoria",
-                filterIntro: "Selecione os cards abaixo para filtrar os jogos disponíveis.",
+                filterIntro: "Selecione os cards abaixo para filtrar as seleções ou craques.",
                 step2: "Passo 2: Selecione os Jogos",
                 editIntro: "Marque os jogos que você quer assistir com os amigos.",
-                loading: "⚽ Carregando jogos...",
-                btnText: "Enviar para o WhatsApp",
-                alertSelect: "Por favor, selecione pelo menos um jogo!",
+                backBtn: "Alterar filtros",
+                btnViewMatches: "Ver Partidas",
+                btnShareWhatsApp: "Enviar para o WhatsApp",
+                alertSelectFilter: "Por favor, selecione pelo menos uma categoria primeiro!",
+                alertSelectMatch: "Por favor, selecione pelo menos um jogo!",
                 wpGreeting: "Olá! Bora assistir a esses jogos?\n",
-                wpFooter: "\nMonte sua agenda aqui: "
+                wpFooter: "\nMonte sua agenda aqui: ",
+                noMatches: "Nenhum jogo encontrado para os filtros selecionados."
             }
         };
 
@@ -231,14 +280,10 @@
             try {
                 const response = await fetch(API_URL);
                 allMatches = await response.json();
-                
-                // MÁGICA: Extrai todas as categorias de filtros direto da coluna da sua planilha automaticamente
                 extractCategoriesFromData();
-                
                 renderFilterCards();
-                renderSchedule();
             } catch (error) {
-                document.getElementById('matchList').innerHTML = `<div style="color:#ff4a4a; text-align:center;">⚠️ Erro ao carregar os dados. Verifique a API.</div>`;
+                document.getElementById('filterCardsContainer').innerHTML = `<div style="color:#ff4a4a; text-align:center; grid-column: 1 / -1;">⚠️ Erro ao carregar os dados. Verifique a API.</div>`;
             }
         }
 
@@ -246,12 +291,9 @@
             let categoriesSet = new Set();
             allMatches.forEach(m => {
                 if (m.keywords) {
-                    // Separa os itens por vírgula, limpa os espaços e joga no Set
                     m.keywords.split(',').forEach(keyword => {
                         let cleanKeyword = keyword.trim().toLowerCase();
-                        if (cleanKeyword) {
-                            categoriesSet.add(cleanKeyword);
-                        }
+                        if (cleanKeyword) categoriesSet.add(cleanKeyword);
                     });
                 }
             });
@@ -262,7 +304,7 @@
             currentLang = currentLang === 'en' ? 'pt' : 'en';
             document.getElementById('langBtn').innerText = currentLang === 'en' ? "PT 🇧🇷" : "EN 🇺🇸";
             updateUI();
-            renderSchedule();
+            if (activeScreen === 2) renderSchedule();
         }
 
         function updateUI() {
@@ -271,14 +313,20 @@
             document.getElementById('filterIntro').innerText = dictionary[currentLang].filterIntro;
             document.getElementById('step2Title').innerText = dictionary[currentLang].step2;
             document.getElementById('editIntro').innerText = dictionary[currentLang].editIntro;
-            document.getElementById('btnText').innerText = dictionary[currentLang].btnText;
+            document.getElementById('backBtnText').innerText = dictionary[currentLang].backBtn;
+            
+            // Atualiza o texto do botão do rodapé com base na tela ativa
+            const actionBtn = document.getElementById('footerActionBtn');
+            if (activeScreen === 1) {
+                document.getElementById('btnText').innerText = dictionary[currentLang].btnViewMatches;
+            } else {
+                document.getElementById('btnText').innerText = dictionary[currentLang].btnShareWhatsApp;
+            }
         }
 
-        // Renderiza os Cards Visuais baseado nas categorias encontradas no Sheets
         function renderFilterCards() {
             const container = document.getElementById('filterCardsContainer');
             container.innerHTML = '';
-            
             uniqueCategories.forEach(category => {
                 const card = document.createElement('div');
                 card.className = 'category-card';
@@ -296,7 +344,48 @@
                 selectedFilters.add(category);
                 cardElement.classList.add('active');
             }
+        }
+
+        function navigateToScreen(screenNumber) {
+            activeScreen = screenNumber;
+            const btn = document.getElementById('footerActionBtn');
+            
+            if (screenNumber === 1) {
+                document.getElementById('screenMatches').classList.remove('active');
+                document.getElementById('screenFilters').classList.add('active');
+                
+                // Transiciona o botão de volta ao estilo neon do passo 1
+                btn.className = "action-btn next-step-style";
+                btn.onclick = goToMatchesScreen;
+                // Remove ícone do whats se houver
+                const img = btn.querySelector('img');
+                if (img) img.remove();
+            } else {
+                document.getElementById('screenFilters').classList.remove('active');
+                document.getElementById('screenMatches').classList.add('active');
+                
+                // Transiciona o botão para o estilo oficial verde do WhatsApp
+                btn.className = "action-btn whatsapp-style";
+                btn.onclick = shareOnWhatsApp;
+                
+                // Insere dinamicamente o ícone SVG do WhatsApp
+                if (!btn.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg";
+                    img.alt = "WhatsApp";
+                    btn.insertBefore(img, btn.firstChild);
+                }
+            }
+            updateUI();
+        }
+
+        function goToMatchesScreen() {
+            if (selectedFilters.size === 0) {
+                alert(dictionary[currentLang].alertSelectFilter);
+                return;
+            }
             renderSchedule();
+            navigateToScreen(2);
         }
 
         function getLocalTimeData(isoString) {
@@ -309,23 +398,16 @@
 
         function renderSchedule() {
             let html = '';
-            
             allMatches.forEach(m => {
                 const home = currentLang === 'en' ? m.team1_en : m.team1_pt;
                 const away = currentLang === 'en' ? m.team2_en : m.team2_pt;
                 const timeData = getLocalTimeData(m.datetime_utc);
-                
                 const cardKeywords = `${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()}`;
 
-                let matchesFilter = true;
-                if (selectedFilters.size > 0) {
-                    matchesFilter = false;
-                    selectedFilters.forEach(f => {
-                        if (cardKeywords.includes(f)) {
-                            matchesFilter = true;
-                        }
-                    });
-                }
+                let matchesFilter = false;
+                selectedFilters.forEach(f => {
+                    if (cardKeywords.includes(f)) matchesFilter = true;
+                });
 
                 if (matchesFilter) {
                     html += `
@@ -341,14 +423,13 @@
                         </div>`;
                 }
             });
-
-            document.getElementById('matchList').innerHTML = html || `<div style="text-align:center; color: var(--text-secondary); padding: 20px;">Nenhum jogo encontrado para os filtros selecionados.</div>`;
+            document.getElementById('matchList').innerHTML = html || `<div style="text-align:center; color: var(--text-secondary); padding: 20px;">${dictionary[currentLang].noMatches}</div>`;
         }
 
         function shareOnWhatsApp() {
             const checkboxes = document.querySelectorAll('.match-cb:checked');
             if (checkboxes.length === 0) {
-                alert(dictionary[currentLang].alertSelect);
+                alert(dictionary[currentLang].alertSelectMatch);
                 return;
             }
 
