@@ -1,256 +1,256 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1d4ed8">
-    <meta name="description" content="Monte sua agenda de jogos da Copa e compartilhe no WhatsApp.">
-    <title>My World Cup Games / Meus Jogos da Copa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Match Planner</title>
     <style>
-        /* Ajuste fino para evitar que o clique selecione texto no mobile */
-        .card-jogo {
-            -webkit-tap-highlight-color: transparent;
+        /* 2002 Brazil Away Kit Inspired Palette: Royal Blue, Neon Yellow, White */
+        :root {
+            --brazil-blue: #0541a6;
+            --brazil-yellow: #ccff00; 
+            --bg-dark-blue: #032b70;
+            --card-white: #ffffff;
+            --text-dark: #111111;
         }
 
-        /* Marca d'água do número 11 inspirada na tipografia da camisa de 2002 */
-        .jersey-number {
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 24rem;
-            line-height: 1;
-            font-weight: 900;
-            letter-spacing: -0.05em;
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 15px; 
+            background-color: var(--bg-dark-blue); 
+            color: white;
         }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--brazil-yellow);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 { margin: 0; color: white; text-transform: uppercase; font-style: italic; font-size: 20px; }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid var(--brazil-yellow);
+            color: var(--brazil-yellow);
+            padding: 5px 12px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lang-btn:hover {
+            background: var(--brazil-yellow);
+            color: var(--bg-dark-blue);
+        }
+
+        .intro-text { color: #d0e0ff; font-size: 14px; margin-bottom: 20px; }
+
+        .match-card { 
+            background: var(--card-white); 
+            color: var(--text-dark);
+            padding: 15px; 
+            margin: 12px 0; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border-left: 6px solid var(--brazil-blue);
+        }
+
+        .match-card input[type="checkbox"] { 
+            margin-right: 15px; 
+            transform: scale(1.4); 
+            cursor: pointer;
+            accent-color: var(--brazil-blue);
+        }
+
+        .match-info { flex-grow: 1; }
+        
+        .teams { font-size: 18px; font-weight: bold; color: var(--brazil-blue); }
+        
+        .meta-data { 
+            font-size: 13px; 
+            color: #555; 
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .badge-group {
+            display: inline-block;
+            background: #e1ecf4;
+            color: #032b70;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        button.action-btn { 
+            background: var(--brazil-yellow); 
+            color: var(--bg-dark-blue); 
+            border: none; 
+            padding: 15px 20px; 
+            font-size: 16px; 
+            font-weight: bold;
+            border-radius: 8px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        button.action-btn:hover { opacity: 0.9; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body>
 
-    <div class="fixed inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden" aria-hidden="true">
-        <div class="jersey-number text-blue-600/[0.06] transform -rotate-6 select-none">11</div>
-    </div>
-
-    <header class="bg-blue-700 text-white shadow-lg sticky top-0 z-50 border-b-4 border-white">
-        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-            <div>
-                <h1 id="txt-title" class="text-xl font-black tracking-wider uppercase">🗓️ Meus Jogos</h1>
-                <p id="txt-subtitle" class="text-xs opacity-80 mt-0.5 font-medium">Monte suas partidas imperdíveis</p>
-            </div>
-            
-            <div class="relative inline-block text-left">
-                <select id="select-lang" aria-label="Selecione o idioma" class="bg-white/10 text-white text-xs font-bold rounded-xl px-3 py-2 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 cursor-pointer appearance-none pr-7 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23fbbf24%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%27style%3E')] bg-[length:8px_auto] bg-[right_10px_center] bg-no-repeat">
-                    <option value="pt" class="text-slate-800">PT 🇧🇷</option>
-                    <option value="en" class="text-slate-800">EN 🇺🇸</option>
-                </select>
-            </div>
-        </div>
+    <header>
+        <h2 id="appTitle">🏆 2026 Match Planner</h2>
+        <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">PT 🇧🇷</button>
     </header>
 
-    <main class="max-w-md mx-auto p-4 relative z-10">
-        
-        <div id="txt-instruction" class="mb-5 text-xs font-bold tracking-wide uppercase text-blue-800 text-center bg-white py-3 px-4 rounded-2xl shadow-sm border border-slate-200/60" role="status">
-            selecione os jogos que você quer parar para ver
-        </div>
-
-        <div id="lista-jogos" class="space-y-3.5 pb-28">
-            </div>
-
-    </main>
-
-    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md p-4 border-t-2 border-slate-200 shadow-xl z-50">
-        <div class="max-w-md mx-auto">
-            <button id="btn-compartilhar" disabled class="w-full bg-blue-700 hover:bg-blue-800 text-white font-black uppercase tracking-wider py-4 px-4 rounded-2xl shadow-lg transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-300">
-                <span class="text-yellow-400 text-lg">💬</span>
-                <span id="txt-btn-text">Compartilhar Agenda (0)</span>
-            </button>
-        </div>
+    <div id="mainContainer">
+        <p class="intro-text" id="editIntro">Select the matches you plan to watch, then share the schedule with your friends on WhatsApp.</p>
+        <div id="matchList">⚽ Loading schedule...</div>
+        <button class="action-btn" onclick="shareOnWhatsApp()" id="shareBtn">
+            🟢 Share on WhatsApp
+        </button>
     </div>
 
     <script>
-        // --- AQUI ESTÁ A SUA NOVA URL DO APPS SCRIPT ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbxViNJqBy_ECJjulYSF5IVv3IDOh7_AG7xHvmjAVLSEipN43kBtAfAtWpJC3cvJryIYbA/exec";
+        // ⚠️ CUSTOM CONFIGURATIONS
+        const API_URL = "YOUR_APPS_SCRIPT_URL_HERE"; 
+        const GITHUB_PAGES_URL = "YOUR_GITHUB_PAGES_URL_HERE"; 
 
-        // Dicionário de Idiomas
-        const i18n = {
-            pt: {
-                title: "🗓️ Meus Jogos",
-                subtitle: "Monte suas partidas e compartilhe",
-                instruction: "selecione os jogos que você quer parar para ver",
-                btnText: "Compartilhar Agenda",
-                loading: "⚽ Buscando a tabela oficial do seu Google Sheets...",
-                error: "Erro ao carregar os jogos da planilha. Verifique a implantação do Apps Script.",
-                whatsappHeader: "👋 Olha só os jogos da Copa que eu vou assistir! Bora ver juntos?\n\n",
-                whatsappFooter: "Faça a sua lista também em:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
-                days: { "Seg": "Segunda", "Ter": "Terça", "Qua": "Quarta", "Qui": "Quinta", "Sex": "Sexta", "Sáb": "Sábado", "Dom": "Domingo" }
-            },
+        let allMatches = [];
+        let currentLang = 'en'; 
+
+        const dictionary = {
             en: {
-                title: "⚽ My Matchday",
-                subtitle: "Build your schedule and share",
-                instruction: "Select the matches you plan to watch:",
-                btnText: "Share Schedule",
-                loading: "⚽ Fetching match schedule from your Google Sheets...",
-                error: "Failed to load matches from spreadsheet. Check Apps Script configuration.",
-                whatsappHeader: "👋 Check out the World Cup matches I'm planning to watch! Let's watch together?\n\n",
-                whatsappFooter: "Make your own list too at:\nhttps://annefrancischini-vc.github.io/my-world-cup-matches/",
-                days: { "Seg": "Monday", "Ter": "Tuesday", "Qua": "Wednesday", "Qui": "Thursday", "Sex": "Friday", "Sáb": "Saturday", "Dom": "Sunday" }
+                title: "🏆 2026 Match Planner",
+                editIntro: "Select the matches you plan to watch, then share the schedule with your friends on WhatsApp.",
+                loading: "⚽ Loading schedule...",
+                alertSelect: "Please select at least one match first!",
+                wpGreeting: "Hello! Let's watch these matches?\n",
+                wpFooter: "\nPlan yours here: "
+            },
+            pt: {
+                title: "🏆 Agenda Copa 2026",
+                editIntro: "Selecione os jogos que você quer assistir e envie a lista organizada para seus amigos no WhatsApp.",
+                loading: "⚽ Carregando jogos...",
+                alertSelect: "Por favor, selecione pelo menos um jogo!",
+                wpGreeting: "Olá! Bora assistir a esses jogos?\n",
+                wpFooter: "\nMonte sua agenda aqui: "
             }
         };
 
-        let currentLang = 'pt';
-        const jogosSelecionados = new Set();
-        let jogos = []; // Dados em tempo real vindos do seu Sheets
+        const weekdays = {
+            en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            pt: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
+        };
 
-        // Elementos do DOM
-        const elTitle = document.getElementById('txt-title');
-        const elSubtitle = document.getElementById('txt-subtitle');
-        const elInstruction = document.getElementById('txt-instruction');
-        const elBtnText = document.getElementById('txt-btn-text');
-        const elSelectLang = document.getElementById('select-lang');
-        const elListaJogos = document.getElementById('lista-jogos');
-        const elBtnCompartilhar = document.getElementById('btn-compartilhar');
-
-        // Atualiza os textos fixos da interface
-        function atualizarIdiomaInterface() {
-            const textos = i18n[currentLang];
-            elTitle.innerText = textos.title;
-            elSubtitle.innerText = textos.subtitle;
-            elInstruction.innerText = textos.instruction;
-            atualizarBotao();
-            if (jogos.length > 0) {
-                renderizarJogos();
-            }
-        }
-
-        // Faz a chamada assíncrona para buscar os dados do Google Sheets
-        async function buscarJogosDaPlanilha() {
-            const textos = i18n[currentLang];
-            elListaJogos.innerHTML = `<div class="text-center text-sm font-bold text-slate-400 py-12 animate-pulse">${textos.loading}</div>`;
-            
+        async function init() {
+            updateUI();
             try {
                 const response = await fetch(API_URL);
-                jogos = await response.json();
-                renderizarJogos();
+                allMatches = await response.json();
+                renderSchedule();
             } catch (error) {
-                console.error("Erro na requisição da API:", error);
-                elListaJogos.innerHTML = `<div class="text-center text-sm font-bold text-red-500 py-12 px-4">⚠️ ${textos.error}</div>`;
+                document.getElementById('matchList').innerText = "Error loading schedule data.";
+                console.error(error);
             }
         }
 
-        // Renderiza os cards de jogos dinamicamente
-        function renderizarJogos() {
-            elListaJogos.innerHTML = '';
-            const textos = i18n[currentLang];
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'pt' : 'en';
+            document.getElementById('langBtn').innerText = currentLang === 'en' ? "PT 🇧🇷" : "EN 🇺🇸";
+            updateUI();
+            renderSchedule();
+        }
 
-            jogos.forEach(jogo => {
-                const isSelected = jogosSelecionados.has(jogo.id);
-                const card = document.createElement('button');
-                card.type = 'button';
-                card.setAttribute('aria-pressed', isSelected);
-                
-                card.className = `w-full text-left card-jogo p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between select-none focus:outline-none focus:ring-4 focus:ring-blue-300 ${
-                    isSelected 
-                    ? 'bg-blue-700 text-white border-blue-800 shadow-md transform -translate-y-0.5' 
-                    : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 shadow-sm'
-                }`;
-                
-                const diaTraduzido = textos.days[jogo.diaSemana] || jogo.diaSemana;
-                
-                // Lógica de exibição da Tag Curada de Destaque ("Veja Jogar", "Favorita", etc.)
-                const textoDestaque = jogo.destaque ? jogo.destaque[currentLang] : '';
-                const badgeHtml = textoDestaque 
-                    ? `<div class="text-[10px] inline-block font-black uppercase px-2 py-0.5 rounded-md mt-2 ${
-                        isSelected ? 'bg-yellow-400 text-slate-900' : 'bg-blue-100 text-blue-800'
-                      }">${textoDestaque}</div>` 
-                    : '';
+        function updateUI() {
+            document.getElementById('appTitle').innerText = dictionary[currentLang].title;
+            document.getElementById('editIntro').innerText = dictionary[currentLang].editIntro;
+            document.getElementById('shareBtn').innerText = currentLang === 'en' ? "🟢 Share on WhatsApp" : "🟢 Compartilhar no WhatsApp";
+        }
 
-                card.innerHTML = `
-                    <div class="flex-1">
-                        <div class="text-[10px] font-black tracking-widest uppercase flex items-center gap-2 ${isSelected ? 'text-white/80' : 'text-slate-400'}">
-                            <span>📅 ${diaTraduzido}, ${jogo.data}</span>
-                            <span>•</span>
-                            <span>⏰ ${jogo.hora}</span>
-                        </div>
-                        <div class="text-base font-extrabold mt-1.5 flex items-center gap-2.5">
-                            <span>${jogo.selecao1[currentLang]}</span>
-                            <span class="${isSelected ? 'text-yellow-400' : 'text-slate-300'} font-medium text-xs">×</span>
-                            <span>${jogo.selecao2[currentLang]}</span>
-                        </div>
-                        ${badgeHtml}
-                    </div>
-                    <div class="ml-4 flex items-center justify-center shrink-0">
-                        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
-                            isSelected 
-                            ? 'bg-white border-white text-blue-700' 
-                            : 'border-slate-300 bg-slate-50'
-                        }">
-                            ${isSelected ? '<svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>' : ''}
-                        </div>
-                    </div>
-                `;
-
-                card.addEventListener('click', () => alternarSelecao(jogo.id));
-                elListaJogos.appendChild(card);
+        function getLocalTimeData(isoString) {
+            const dateObj = new Date(isoString);
+            const weekday = weekdays[currentLang][dateObj.getDay()];
+            const localDate = dateObj.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'pt-BR', {
+                month: 'numeric', day: 'numeric', year: 'numeric'
             });
+            const localTime = dateObj.toLocaleTimeString([], {
+                hour: '2-digit', minute: '2-digit', hour12: false
+            });
+            return { weekday, localDate, localTime };
         }
 
-        // Gerencia os jogos selecionados pelo usuário
-        function alternarSelecao(id) {
-            if (jogosSelecionados.has(id)) {
-                jogosSelecionados.delete(id);
-            } else {
-                jogosSelecionados.add(id);
+        function renderSchedule() {
+            let html = '';
+            allMatches.forEach(m => {
+                const home = currentLang === 'en' ? m.team1_en : m.team1_pt;
+                const away = currentLang === 'en' ? m.team2_en : m.team2_pt;
+                const timeData = getLocalTimeData(m.datetime_utc);
+
+                html += `
+                    <div class="match-card">
+                        <input type="checkbox" value="${m.id}" class="match-cb" id="match-${m.id}">
+                        <div class="match-info">
+                            <div class="teams">${home} × ${away}</div>
+                            <div class="meta-data">
+                                📅 <strong>${timeData.weekday}</strong>, ${timeData.localDate}<br>
+                                ⏰ ${timeData.localTime} | 📍 ${m.stadium} <span class="badge-group">${m.group}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('matchList').innerHTML = html;
+        }
+
+        function shareOnWhatsApp() {
+            const checkboxes = document.querySelectorAll('.match-cb:checked');
+            if (checkboxes.length === 0) {
+                alert(dictionary[currentLang].alertSelect);
+                return;
             }
-            renderizarJogos();
-            atualizarBotao();
-        }
 
-        // Atualiza dinamicamente o texto e comportamento do botão inferior
-        function atualizarBotao() {
-            const qtd = jogosSelecionados.size;
-            const textos = i18n[currentLang];
-            elBtnText.innerText = `${textos.btnText} (${qtd})`;
-            
-            if (qtd === 0) {
-                elBtnCompartilhar.disabled = true;
-                elBtnCompartilhar.classList.remove('shadow-blue-700/30');
-            } else {
-                elBtnCompartilhar.disabled = false;
-                elBtnCompartilhar.classList.add('shadow-blue-700/30');
-            }
-        }
+            // Start parsing message string
+            let message = dictionary[currentLang].wpGreeting;
 
-        // Estrutura a mensagem final em formato de lista e envia via API do WhatsApp
-        elBtnCompartilhar.addEventListener('click', () => {
-            if (jogosSelecionados.size === 0) return;
-
-            const textos = i18n[currentLang];
-            let mensagem = textos.whatsappHeader;
-            
-            jogos.forEach(jogo => {
-                if (jogosSelecionados.has(jogo.id)) {
-                    const diaTraduzido = textos.days[jogo.diaSemana] || jogo.diaSemana;
-                    const s1 = jogo.selecao1[currentLang];
-                    const s2 = jogo.selecao2[currentLang];
+            checkboxes.forEach(cb => {
+                const matchId = cb.value;
+                const match = allMatches.find(m => String(m.id) === String(matchId));
+                if (match) {
+                    const home = currentLang === 'en' ? match.team1_en : match.team1_pt;
+                    const away = currentLang === 'en' ? match.team2_en : match.team2_pt;
+                    const timeData = getLocalTimeData(match.datetime_utc);
                     
-                    mensagem += `📅 *${diaTraduzido}, ${jogo.data} - ${jogo.hora}*\n⚽ ${s1} × ${s2}\n\n`;
+                    // Format row text
+                    message += `• ${timeData.weekday}, ${timeData.localDate} @ ${timeData.localTime} - ${home} vs ${away}\n`;
                 }
             });
 
-            mensagem += textos.whatsappFooter;
-            const urlMensagem = encodeURIComponent(mensagem);
+            message += dictionary[currentLang].wpFooter + GITHUB_PAGES_URL;
+
+            // URL Encode text string safely and execute redirect
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
             
-            const whatsappUrl = `https://wa.me/?text=${urlMensagem}`;
             window.open(whatsappUrl, '_blank');
-        });
+        }
 
-        // Evento de mudança de Idioma
-        elSelectLang.addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            atualizarIdiomaInterface();
-        });
-
-        // Inicialização do aplicativo móvel
-        atualizarIdiomaInterface();
-        buscarJogosDaPlanilha();
+        window.onload = init;
     </script>
 </body>
 </html>
