@@ -1,449 +1,166 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 Match Planner</title>
-    <style>
-        /* Modern Premium Sports UI Palette */
-        :root {
-            --brazil-blue-glow: #0a58ca;
-            --neon-lime: #ccff00; 
-            --bg-gradient: linear-gradient(135deg, #020b18 0%, #051d3b 100%);
-            --glass-card: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: #a0aec0;
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 500px; 
-            margin: 0 auto; 
-            padding: 20px 16px; 
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 16px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        h2 { 
-            margin: 0; 
-            font-size: 22px; 
-            font-weight: 800;
-            background: linear-gradient(90deg, #ffffff, var(--neon-lime));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .lang-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 99px;
-            cursor: pointer;
-        }
-
-        .intro-text { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 15px; }
-        
-        .section-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--neon-lime);
-            margin: 10px 0 10px 0;
-            font-weight: 700;
-        }
-
-        /* 👑 CONTROLE ESTRITO DE TELAS (Isola completamente o conteúdo) */
-        .app-screen {
-            display: none !important;
-        }
-        .app-screen.active {
-            display: block !important;
-        }
-
-        /* Botão discreto para voltar */
-        .back-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 0;
-        }
-        .back-btn:hover {
-            color: var(--neon-lime);
-        }
-
-        /* Grid de Cards de Filtro Dinâmicos (Tela 1) */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 120px;
-        }
-
-        .category-card {
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            padding: 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: capitalize;
-            transition: all 0.2s ease;
-        }
-
-        .category-card:hover {
-            border-color: rgba(204, 255, 0, 0.5);
-        }
-
-        .category-card.active {
-            background: rgba(204, 255, 0, 0.15);
-            border-color: var(--neon-lime);
-            color: var(--neon-lime);
-            box-shadow: inset 0 0 12px rgba(204, 255, 0, 0.1);
-        }
-
-        /* Lista de partidas (Tela 2) */
-        #matchList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 120px; }
-
-        .match-card { 
-            background: var(--glass-card);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 16px; 
-            border-radius: 16px; 
-            display: flex; 
-            align-items: center; 
-            border: 1px solid var(--glass-border);
-        }
-
-        .match-card input[type="checkbox"] { 
-            margin-right: 16px; 
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            accent-color: var(--neon-lime);
-        }
-
-        .match-info { flex-grow: 1; }
-        .teams { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-        .meta-data { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
-        
-        .badge-group {
-            display: inline-block;
-            background: rgba(10, 88, 202, 0.2);
-            color: #79a6ff;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-top: 6px;
-            border: 1px solid rgba(10, 88, 202, 0.3);
-        }
-
-        /* Container Flutuante do Rodapé */
-        .action-btn-container {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(transparent, #020b18 30%);
-            padding: 24px 16px; display: flex; justify-content: center;
-            max-width: 500px; margin: 0 auto; box-sizing: border-box; z-index: 100;
-        }
-
-        button.action-btn { 
-            border: none; padding: 14px 28px; 
-            font-size: 16px; font-weight: 700; border-radius: 99px; cursor: pointer; width: 100%; 
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-        /* Estilo do Botão do Passo 1 */
-        button.action-btn.next-step-style {
-            background: var(--neon-lime);
-            color: #020b18;
-            box-shadow: 0 8px 24px rgba(204, 255, 0, 0.2);
-        }
-
-        /* Estilo do Botão do WhatsApp */
-        button.action-btn.whatsapp-style {
-            background: #25D366; 
-            color: white;
-            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
-        }
-
-        button.action-btn img { width: 22px; height: 22px; }
-    </style>
+  <base target="_top">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .card-active { border-color: #3B82F6; background-color: #EFF6FF; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2); }
+  </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
-    <header>
-        <h2 id="appTitle">🏆 2026 Match Planner</h2>
-        <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">PT 🇧🇷</button>
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">🏆 Central da Copa 2026</h1>
+      <p class="mt-2 text-lg text-gray-600">Selecione um filtro para ver o calendário cronológico de jogos</p>
     </header>
 
-    <div id="mainContainer">
-        
-        <div id="screenFilters" class="app-screen active">
-            <div class="section-title" id="step1Title">Selecione o que você quer assistir</div>
-            <p class="intro-text" id="filterIntro">Escolha as seleções ou craques favoritos nos cards abaixo.</p>
-            <div class="filter-grid" id="filterCardsContainer">
-                </div>
-        </div>
-
-        <div id="screenMatches" class="app-screen">
-            <button class="back-btn" onclick="navigateToScreen(1)">← <span id="backBtnText">Alterar filtros</span></button>
-            <div class="section-title" id="step2Title">Selecione as partidas</div>
-            <p class="intro-text" id="editIntro">Marque os jogos abaixo para montar sua agenda.</p>
-            <div id="matchList">⚽ Buscando confrontos...</div>
-        </div>
-
+    <!-- 🌟 SEÇÃO: CARDS DE JOGADORES DESTAQUE -->
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-gray-700 mb-3 flex items-center">⭐ Jogadores em Destaque</h2>
+      <div id="players-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <!-- Inserido dinamicamente -->
+      </div>
     </div>
 
-    <div class="action-btn-container">
-        <button class="action-btn next-step-style" onclick="goToMatchesScreen()" id="footerActionBtn">
-            <span id="btnText">Ver Jogos</span>
-        </button>
+    <!-- 🏴 SEÇÃO: CARDS DE SELEÇÕES -->
+    <div class="mb-8">
+      <h2 class="text-xl font-bold text-gray-700 mb-3 flex items-center">🌍 Seleções Filtradas</h2>
+      <div id="teams-container" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        <!-- Inserido dinamicamente -->
+      </div>
     </div>
 
-    <script>
-        // ⚠️ SUAS CONFIGURAÇÕES TÉCNICAS REAIS
-        const API_URL = "https://script.google.com/macros/s/AKfycby_dqxTCNrdJYpO_lIYEtVNdnlOe-fSbzoBi-Vdernezy0ma5OXmICKIvd7ZDX8ZfA/exec"; 
-        const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/"; 
+    <!-- 📅 LISTA DE JOGOS -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-6 py-4 bg-gray-900 flex justify-between items-center text-white">
+        <h3 id="table-title" class="font-bold text-lg">📅 Todas as Partidas</h3>
+        <button onclick="limparFiltros()" class="text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded transition">Ver Todos</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-xs font-semibold tracking-wider border-b border-gray-200">
+              <th class="px-6 py-3 text-center w-16">ID</th>
+              <th class="px-6 py-3">Data & Hora (UTC)</th>
+              <th class="px-6 py-3">Estádio</th>
+              <th class="px-6 py-3 text-center">Grupo</th>
+              <th class="px-6 py-3 text-right">Confronto</th>
+            </tr>
+          </thead>
+          <tbody id="matches-body" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center text-gray-500">Carregando calendário oficial...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-        let allMatches = [];
-        let uniqueCategories = [];
-        let selectedFilters = new Set();
-        let currentLang = 'pt'; // Definido PT-BR como inicial nativo
-        let activeScreen = 1;
+  <script>
+    let cacheDados = null;
+    let filtroAtivo = { tipo: null, valor: null };
 
-        const dictionary = {
-            en: {
-                title: "🏆 2026 Match Planner",
-                step1: "Select what you want to watch",
-                filterIntro: "Choose your favorite teams or star players below.",
-                step2: "Select the matches",
-                editIntro: "Check the boxes for the games you want to save.",
-                backBtn: "Back to choices",
-                btnViewMatches: "View Games",
-                btnShareWhatsApp: "Share on WhatsApp",
-                alertSelectFilter: "Please select at least one choice first!",
-                alertSelectMatch: "Please select at least one match first!",
-                wpGreeting: "Hello! Let's watch these matches?\n",
-                wpFooter: "\nPlan yours here: ",
-                noMatches: "No matches found for the selected choices."
-            },
-            pt: {
-                title: "🏆 Agenda Copa 2026",
-                step1: "Selecione o que você quer assistir",
-                filterIntro: "Escolha as seleções ou craques favoritos nos cards abaixo.",
-                step2: "Selecione as partidas",
-                editIntro: "Marque os jogos abaixo para montar sua agenda.",
-                backBtn: "Voltar para escolhas",
-                btnViewMatches: "Ver Jogos",
-                btnShareWhatsApp: "Compartilhar no WhatsApp",
-                alertSelectFilter: "Por favor, selecione pelo menos uma opção primeiro!",
-                alertSelectMatch: "Por favor, selecione pelo menos um jogo!",
-                wpGreeting: "Olá! Bora assistir a esses jogos?\n",
-                wpFooter: "\nMonte sua agenda aqui: ",
-                noMatches: "Nenhum jogo encontrado para os filtros selecionados."
-            }
-        };
+    window.onload = function() {
+      google.script.run.withSuccessHandler(renderizarInterface).getAppData();
+    };
 
-        const weekdays = {
-            en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            pt: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
-        };
+    function renderizarInterface(dados) {
+      cacheDados = dados;
+      
+      // Renderizar Jogadores
+      const pContainer = document.getElementById('players-container');
+      pContainer.innerHTML = '';
+      dados.uniquePlayers.forEach(p => {
+        pContainer.innerHTML += `
+          <div onclick="filtrar('player', '${p}', this)" class="bg-white border border-gray-200 p-4 rounded-xl cursor-pointer text-center hover:shadow-sm transition font-semibold capitalize text-blue-600">
+            🏃‍♂️ ${p}
+          </div>`;
+      });
 
-        async function init() {
-            updateUI();
-            try {
-                const response = await fetch(API_URL);
-                allMatches = await response.json();
-                extractCategoriesFromData();
-                renderFilterCards();
-            } catch (error) {
-                document.getElementById('filterCardsContainer').innerHTML = `<div style="color:#ff4a4a; text-align:center; grid-column:1/-1;">⚠️ Erro de conexão com o banco de dados.</div>`;
-            }
-        }
+      // Renderizar Seleções
+      const tContainer = document.getElementById('teams-container');
+      tContainer.innerHTML = '';
+      dados.uniqueTeams.forEach(t => {
+        tContainer.innerHTML += `
+          <div onclick="filtrar('team', '${t}', this)" class="bg-white border border-gray-200 p-3 rounded-lg cursor-pointer text-center hover:shadow-sm transition text-sm font-medium">
+            ⚽ ${t}
+          </div>`;
+      });
 
-        function extractCategoriesFromData() {
-            let categoriesSet = new Set();
-            allMatches.forEach(m => {
-                if (m.keywords) {
-                    m.keywords.split(',').forEach(keyword => {
-                        let cleanKeyword = keyword.trim().toLowerCase();
-                        if (cleanKeyword) categoriesSet.add(cleanKeyword);
-                    });
-                }
-            });
-            uniqueCategories = Array.from(categoriesSet).sort();
-        }
+      atualizarTabela();
+    }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'en' ? 'pt' : 'en';
-            document.getElementById('langBtn').innerText = currentLang === 'en' ? "PT 🇧🇷" : "EN 🇺🇸";
-            updateUI();
-            if (activeScreen === 2) renderSchedule();
-        }
+    function filtrar(tipo, valor, elemento) {
+      // Remove destaques antigos
+      document.querySelectorAll('#players-container > div, #teams-container > div').forEach(el => {
+        el.classList.remove('card-active');
+      });
+      
+      // Aplica novo filtro ou limpa se clicar no mesmo
+      if (filtroAtivo.tipo === tipo && filtroAtivo.valor === valor) {
+        limparFiltros();
+      } else {
+        filtroAtivo = { tipo: tipo, valor: valor };
+        elemento.classList.add('card-active');
+        document.getElementById('table-title').innerText = `📅 Jogos de: ${valor.toUpperCase()}`;
+        atualizarTabela();
+      }
+    }
 
-        function updateUI() {
-            document.getElementById('appTitle').innerText = dictionary[currentLang].title;
-            document.getElementById('step1Title').innerText = dictionary[currentLang].step1;
-            document.getElementById('filterIntro').innerText = dictionary[currentLang].filterIntro;
-            document.getElementById('step2Title').innerText = dictionary[currentLang].step2;
-            document.getElementById('editIntro').innerText = dictionary[currentLang].editIntro;
-            document.getElementById('backBtnText').innerText = dictionary[currentLang].backBtn;
-            
-            const actionBtn = document.getElementById('footerActionBtn');
-            if (activeScreen === 1) {
-                document.getElementById('btnText').innerText = dictionary[currentLang].btnViewMatches;
-            } else {
-                document.getElementById('btnText').innerText = dictionary[currentLang].btnShareWhatsApp;
-            }
-        }
+    function limparFiltros() {
+      filtroAtivo = { tipo: null, valor: null };
+      document.querySelectorAll('#players-container > div, #teams-container > div').forEach(el => {
+        el.classList.remove('card-active');
+      });
+      document.getElementById('table-title').innerText = '📅 Todas as Partidas';
+      atualizarTabela();
+    }
 
-        function renderFilterCards() {
-            const container = document.getElementById('filterCardsContainer');
-            container.innerHTML = '';
-            uniqueCategories.forEach(category => {
-                const card = document.createElement('div');
-                card.className = 'category-card';
-                card.innerText = category;
-                card.onclick = () => handleCardClick(category, card);
-                container.appendChild(card);
-            });
-        }
+    function formatarData(isoString) {
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return isoString;
+      return d.toLocaleDateString('pt-BR') + ' - ' + d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) + ' UTC';
+    }
 
-        function handleCardClick(category, cardElement) {
-            if (selectedFilters.has(category)) {
-                selectedFilters.delete(category);
-                cardElement.classList.remove('active');
-            } else {
-                selectedFilters.add(category);
-                cardElement.classList.add('active');
-            }
-        }
+    function atualizarTabela() {
+      if (!cacheDados) return;
+      
+      const tbody = document.getElementById('matches-body');
+      tbody.innerHTML = '';
 
-        function navigateToScreen(screenNumber) {
-            activeScreen = screenNumber;
-            const btn = document.getElementById('footerActionBtn');
-            
-            if (screenNumber === 1) {
-                document.getElementById('screenMatches').classList.remove('active');
-                document.getElementById('screenFilters').classList.add('active');
-                
-                btn.className = "action-btn next-step-style";
-                btn.onclick = goToMatchesScreen;
-                const img = btn.querySelector('img');
-                if (img) img.remove();
-            } else {
-                document.getElementById('screenFilters').classList.remove('active');
-                document.getElementById('screenMatches').classList.add('active');
-                
-                btn.className = "action-btn whatsapp-style";
-                btn.onclick = shareOnWhatsApp;
-                
-                if (!btn.querySelector('img')) {
-                    const img = document.createElement('img');
-                    img.src = "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg";
-                    img.alt = "WhatsApp";
-                    btn.insertBefore(img, btn.firstChild);
-                }
-            }
-            updateUI();
-        }
+      // Executa o filtro lógico
+      let jogosFiltrados = cacheDados.matches;
+      if (filtroAtivo.tipo === 'team') {
+        jogosFiltrados = cacheDados.matches.filter(j => 
+          j.team1.toLowerCase() === filtroAtivo.valor.toLowerCase() || 
+          j.team2.toLowerCase() === filtroAtivo.valor.toLowerCase()
+        );
+      } else if (filtroAtivo.tipo === 'player') {
+        jogosFiltrados = cacheDados.matches.filter(j => j.keyword === filtroAtivo.valor.toLowerCase());
+      }
 
-        function goToMatchesScreen() {
-            if (selectedFilters.size === 0) {
-                alert(dictionary[currentLang].alertSelectFilter);
-                return;
-            }
-            renderSchedule();
-            navigateToScreen(2);
-        }
+      if (jogosFiltrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-400">Nenhum jogo encontrado para este filtro.</td></tr>`;
+        return;
+      }
 
-        function getLocalTimeData(isoString) {
-            const dateObj = new Date(isoString);
-            const weekday = weekdays[currentLang][dateObj.getDay()];
-            const localDate = dateObj.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'pt-BR', { month: 'numeric', day: 'numeric' });
-            const localTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-            return { weekday, localDate, localTime };
-        }
-
-        function renderSchedule() {
-            let html = '';
-            allMatches.forEach(m => {
-                const home = currentLang === 'en' ? m.team1_en : m.team1_pt;
-                const away = currentLang === 'en' ? m.team2_en : m.team2_pt;
-                const timeData = getLocalTimeData(m.datetime_utc);
-                const cardKeywords = `${(m.keywords || '').toLowerCase()} ${home.toLowerCase()} ${away.toLowerCase()}`;
-
-                let matchesFilter = false;
-                selectedFilters.forEach(f => {
-                    if (cardKeywords.includes(f)) matchesFilter = true;
-                });
-
-                if (matchesFilter) {
-                    html += `
-                        <div class="match-card">
-                            <input type="checkbox" value="${m.id}" class="match-cb" id="match-${m.id}">
-                            <div class="match-info">
-                                <div class="teams">${home} × ${away}</div>
-                                <div class="meta-data">
-                                    📅 <strong>${timeData.weekday}</strong>, ${timeData.localDate} | ⏰ ${timeData.localTime}<br>
-                                    📍 ${m.stadium} <span class="badge-group">${m.group}</span>
-                                </div>
-                            </div>
-                        </div>`;
-                }
-            });
-            document.getElementById('matchList').innerHTML = html || `<div style="text-align:center; color: var(--text-secondary); padding: 20px;">${dictionary[currentLang].noMatches}</div>`;
-        }
-
-        function shareOnWhatsApp() {
-            const checkboxes = document.querySelectorAll('.match-cb:checked');
-            if (checkboxes.length === 0) {
-                alert(dictionary[currentLang].alertSelectMatch);
-                return;
-            }
-
-            let message = dictionary[currentLang].wpGreeting;
-            checkboxes.forEach(cb => {
-                const match = allMatches.find(m => String(m.id) === String(cb.value));
-                if (match) {
-                    const home = currentLang === 'en' ? match.team1_en : match.team1_pt;
-                    const away = currentLang === 'en' ? match.team2_en : match.team2_pt;
-                    const timeData = getLocalTimeData(match.datetime_utc);
-                    message += `• ${timeData.weekday}, ${timeData.localDate} @ ${timeData.localTime} - ${home} vs ${away}\n`;
-                }
-            });
-
-            message += dictionary[currentLang].wpFooter + GITHUB_PAGES_URL;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
-        }
-
-        window.onload = init;
-    </script>
+      // Renderiza as linhas (já ordenadas cronologicamente pelo Apps Script)
+      jogosFiltrados.forEach(j => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-4 text-center font-bold text-gray-400 text-sm">${j.id}</td>
+            <td class="px-6 py-4 text-sm font-medium text-gray-600">${formatarData(j.dateTime)}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">${j.stadium}</td>
+            <td class="px-6 py-4 text-center"><span class="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded font-bold">${j.group}</span></td>
+            <td class="px-6 py-4 text-right font-semibold text-gray-900">
+              ${j.team1} <span class="text-gray-400 font-normal">vs</span> ${j.team2}
+            </td>
+          </tr>
+        `;
+      });
+    }
+  </script>
 </body>
 </html>
