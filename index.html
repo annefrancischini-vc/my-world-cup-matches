@@ -15,7 +15,6 @@
             --accent-neon: #D4FF00;
             --text-dark: #051238;
             --text-muted: #627293;
-            --kit-white: #EBF0FF;
         }
 
         * {
@@ -183,24 +182,27 @@
 
         .action-btn {
             background: rgba(255, 255, 255, 0.05);
-            color: var(--card-white);
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
             padding: 16px 40px;
             font-size: 1rem;
             font-weight: 700;
             text-transform: lowercase;
-            cursor: pointer;
+            cursor: not-allowed;
             width: 100%;
             max-width: 560px;
             border-radius: 0px;
             text-align: center;
+            pointer-events: none;
         }
 
-        .action-btn.primary {
+        .action-btn.enabled {
             background: var(--accent-neon);
             color: var(--text-dark);
             border-color: var(--accent-neon);
             font-weight: 900;
+            cursor: pointer;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -227,11 +229,11 @@
     </div>
 
     <div class="action-bar" id="action-bar-whatsapp" style="display:none;">
-        <button class="action-btn primary" id="share-btn" onclick="shareToWhatsApp()">enviar por whatsapp (0)</button>
+        <button class="action-btn" id="share-btn" onclick="shareToWhatsApp()">enviar por whatsapp (0)</button>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxieU3NDVxF7xXfk_NcSuLfQLm5hDj7z3nSdTRRq44fMhsA7HiisR6yS3_niYA-pj3f/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbz413XpLFtHiZvC33h2lR1KPaymbj988nlyywYyAVzaZk44T85UW_kVDEB6Gp7O11Es/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -254,16 +256,10 @@
             try {
                 const response = await fetch(API_URL);
                 matchesData = await response.json();
-                
-                if (!Array.isArray(matchesData) || matchesData.length === 0) {
-                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>Nenhum dado encontrado na planilha.</div>";
-                    return;
-                }
-
                 buildFilterButtons();
             } catch (error) {
                 console.error(error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados.</div>";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados da aba app.</div>";
             }
         }
 
@@ -271,13 +267,23 @@
             const filterSet = new Set();
 
             matchesData.forEach(match => {
-                const t1 = currentLang === 'EN' ? (match.Team1_EN || "") : (match.Team1_PT || "");
-                const t2 = currentLang === 'EN' ? (match.Team2_EN || "") : (match.Team2_PT || "");
-                const fEspecial = match.filter_especial || "";
-
-                if (String(t1).trim() !== "") filterSet.add(String(t1).toUpperCase().trim());
-                if (String(t2).trim() !== "") filterSet.add(String(t2).toUpperCase().trim());
-                if (String(fEspecial).trim() !== "") filterSet.add(String(fEspecial).toUpperCase().trim());
+                const hasPlayer = Number(match.has_player);
+                
+                if (currentLang === 'PT') {
+                    if (hasPlayer === 1 && match.filter_especial) {
+                        filterSet.add(match.filter_especial.toUpperCase().trim());
+                    } else {
+                        if (match.Team1_PT) filterSet.add(match.Team1_PT.toUpperCase().trim());
+                        if (match.Team2_PT) filterSet.add(match.Team2_PT.toUpperCase().trim());
+                    }
+                } else {
+                    if (hasPlayer === 1 && match.filter_especial) {
+                        filterSet.add(match.filter_especial.toUpperCase().trim());
+                    } else {
+                        if (match.Team1_EN) filterSet.add(match.Team1_EN.toUpperCase().trim());
+                        if (match.Team2_EN) filterSet.add(match.Team2_EN.toUpperCase().trim());
+                    }
+                }
             });
 
             const container = document.getElementById('container-unificado');
@@ -303,6 +309,7 @@
                     container.appendChild(blank);
                 }
             }
+            validateFilterButton();
         }
 
         function toggleFilter(value, element) {
@@ -312,6 +319,16 @@
             } else {
                 selectedFilters.add(value);
                 element.classList.add('active');
+            }
+            validateFilterButton();
+        }
+
+        function validateFilterButton() {
+            const btn = document.getElementById('btn-partidas');
+            if (selectedFilters.size > 0) {
+                btn.classList.add('enabled');
+            } else {
+                btn.classList.remove('enabled');
             }
         }
 
@@ -331,20 +348,16 @@
             matchesData.forEach(match => {
                 let showMatch = false;
 
-                if (selectedFilters.size === 0) {
-                    showMatch = true;
-                } else {
-                    const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
-                    const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
-                    const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
-                    const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
-                    const fEspecial = String(match.filter_especial || "").toUpperCase().trim();
+                const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
+                const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
+                const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
+                const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
+                const fEspecial = String(match.filter_especial || "").toUpperCase().trim();
 
-                    for (let filter of selectedFilters) {
-                        if (t1PT === filter || t2PT === filter || t1EN === filter || t2EN === filter || fEspecial === filter) {
-                            showMatch = true;
-                            break; 
-                        }
+                for (let filter of selectedFilters) {
+                    if (t1PT === filter || t2PT === filter || t1EN === filter || t2EN === filter || fEspecial === filter) {
+                        showMatch = true;
+                        break; 
                     }
                 }
 
@@ -353,8 +366,6 @@
                     
                     let dateStr = "A definir";
                     let weekdayShort = "---";
-
-                    // Tolerante a falhas: aceita colunas batizadas de DateTime_U ou DateTime_UTC
                     const rawDate = match.DateTime_UTC || match.DateTime_U;
 
                     if (rawDate) {
@@ -386,23 +397,29 @@
             if (!hasMatches) {
                 container.innerHTML = `<div class="loading">nenhuma partida encontrada.</div>`;
             }
-            updateShareButtonText();
+            validateWhatsappButton();
         }
 
         function handleSelect(checkbox) {
             const id = checkbox.getAttribute('data-id');
             if (checkbox.checked) selectedMatches.add(id);
             else selectedMatches.delete(id);
-            updateShareButtonText();
+            validateWhatsappButton();
         }
 
-        function updateShareButtonText() {
-            document.getElementById('share-btn').innerText = `${dictionary[currentLang].shareBtnBase} (${selectedMatches.size})`;
+        function validateWhatsappButton() {
+            const btn = document.getElementById('share-btn');
+            btn.innerText = `${dictionary[currentLang].shareBtnBase} (${selectedMatches.size})`;
+            if (selectedMatches.size > 0) {
+                btn.classList.add('enabled');
+            } else {
+                btn.classList.remove('enabled');
+            }
         }
 
         function toggleLanguage() {
-            const oldFilters = Array.from(selectedFilters);
             selectedFilters.clear();
+            selectedMatches.clear();
 
             currentLang = currentLang === 'EN' ? 'PT' : 'EN';
             document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
@@ -411,25 +428,10 @@
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            matchesData.forEach(match => {
-                const sourcePT = [String(match.Team1_PT || "").toUpperCase(), String(match.Team2_PT || "").toUpperCase()];
-                const sourceEN = [String(match.Team1_EN || "").toUpperCase(), String(match.Team2_EN || "").toUpperCase()];
-                const fEsp = String(match.filter_especial || "").toUpperCase();
-
-                oldFilters.forEach(f => {
-                    if (f === fEsp && f !== "") selectedFilters.add(f); 
-                    if (currentLang === 'EN' && sourcePT.includes(f)) {
-                        const idx = sourcePT.indexOf(f);
-                        if (idx !== -1 && sourceEN[idx]) selectedFilters.add(sourceEN[idx]);
-                    } else if (currentLang === 'PT' && sourceEN.includes(f)) {
-                        const idx = sourceEN.indexOf(f);
-                        if (idx !== -1 && sourcePT[idx]) selectedFilters.add(sourcePT[idx]);
-                    }
-                });
-            });
-
             buildFilterButtons();
-            if (document.getElementById('screen-matches').style.display !== 'none') renderFilteredMatches();
+            if (document.getElementById('screen-matches').style.display !== 'none') {
+                renderFilteredMatches();
+            }
         }
 
         function shareToWhatsApp() {
