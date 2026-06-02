@@ -10,12 +10,12 @@
     <style>
         :root {
             --bg-blue: #0F3097;       /* Azul Royal Vivo do uniforme de 2002 */
-            --bg-darker: #0A226B;     /* Sombra para profundidade esportiva */
+            --bg-darker: #0A226B;     /* Sombra para profundidade */
             --card-white: #FFFFFF;
-            --accent-neon: #D4FF00;   /* Amarelo/Verde limão elétrico das linhas da Nike de 2002 */
+            --accent-neon: #D4FF00;   /* Amarelo/Verde limão elétrico de 2002 */
             --text-dark: #051238;
             --text-muted: #627293;
-            --kit-white: #EBF0FF;     /* Branco texturizado do detalhe do ombro */
+            --kit-white: #EBF0FF;
         }
 
         * {
@@ -35,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* Elementos Visuais Inspirados no Design do Uniforme de 2002 */
         body::before {
             content: "";
             position: absolute;
@@ -66,7 +65,7 @@
             padding: 6px 14px;
             font-weight: 700;
             cursor: pointer;
-            border-radius: 0px; /* Alinhado com o design seco do wireframe */
+            border-radius: 0px;
             text-transform: uppercase;
             font-size: 0.8rem;
             transition: all 0.2s ease;
@@ -98,22 +97,13 @@
             letter-spacing: -0.5px;
         }
 
-        .section-subtitle {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-neon);
-            margin: 25px 0 12px;
-            font-weight: 700;
-            opacity: 0.9;
-        }
-
-        /* Grid de Filtros Exata do Wireframe */
+        /* Grid Única de Filtros (Sem divisões de categorias) */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             width: 100%;
+            margin-top: 10px;
         }
 
         .filter-box {
@@ -131,7 +121,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0px; /* Bordas secas dos botões */
+            border-radius: 0px; /* Design seco e reto */
         }
 
         .filter-box:hover {
@@ -139,7 +129,6 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* Estado ativo inspirado na vivacidade do uniforme */
         .filter-box.active {
             background: var(--card-white);
             color: var(--text-dark);
@@ -154,11 +143,6 @@
             border-style: dashed;
         }
 
-        .filter-box.disabled:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
         /* Lista de Partidas */
         .match-list-container {
             width: 100%;
@@ -166,7 +150,7 @@
 
         .loading {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             color: var(--accent-neon);
             font-weight: 600;
             font-size: 0.9rem;
@@ -177,7 +161,7 @@
             background: var(--card-white);
             color: var(--text-dark);
             margin-bottom: 14px;
-            border-radius: 0px; /* Cantos vivos e retos */
+            border-radius: 0px;
             border-left: 6px solid var(--bg-blue);
             padding: 18px 20px;
             display: flex;
@@ -187,7 +171,6 @@
             position: relative;
         }
 
-        /* Linha decorativa branca dinâmica na lateral do card de jogos */
         .match-card::after {
             content: "";
             position: absolute;
@@ -237,16 +220,14 @@
             vertical-align: middle;
         }
 
-        /* Checkbox de Seleção Final de Jogos */
         .select-check {
             height: 24px;
             width: 24px;
             cursor: pointer;
             accent-color: var(--bg-blue);
-            border-radius: 0px;
         }
 
-        /* Sistema de Abas / Botões de Ação Inferiores */
+        /* Barra de Ações Inferiores */
         .action-bar {
             position: fixed;
             bottom: 0;
@@ -271,7 +252,7 @@
             cursor: pointer;
             width: 100%;
             max-width: 560px;
-            border-radius: 0px; /* Mantendo formato reto do wireframe */
+            border-radius: 0px;
             transition: all 0.2s ease;
             text-align: center;
         }
@@ -300,15 +281,8 @@
 
     <main id="screen-filter">
         <h1 class="page-title" id="filter-title">o que você quer assistir?</h1>
-        
-        <div class="section-subtitle" id="sub-countries">países</div>
-        <div class="filter-grid" id="container-countries">
-            <div class="loading">buscando países...</div>
-        </div>
-        
-        <div class="section-subtitle" id="sub-players">jogadores / estrelas</div>
-        <div class="filter-grid" id="container-players">
-            <div class="loading">buscando estrelas...</div>
+        <div class="filter-grid" id="container-unificado">
+            <div class="loading">buscando opções de jogos...</div>
         </div>
     </main>
 
@@ -326,21 +300,18 @@
     </div>
 
     <script>
-        // URLs parametrizadas fornecidas
         const API_URL = "https://script.google.com/macros/s/AKfycbzUrHvILOxOBaNsK5OWR4K4Oh487qeGAa7fxD7koqv1MfmJlyLpeuUExk7RAOT-Wll_/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
         let matchesData = [];
-        const selectedFilters = new Set(); // Guarda múltiplos filtros ativos simultaneamente
+        const selectedFilters = new Set();
         const selectedMatches = new Set();
 
         const dictionary = {
             EN: {
                 filterTitle: "what do you want to watch?",
                 matchesTitle: "select",
-                subCountries: "countries",
-                subPlayers: "featured players",
                 actionPartidas: "matches",
                 greeting: "Hello! Let's watch these matches?",
                 footerMsg: "Plan yours here: ",
@@ -349,8 +320,6 @@
             PT: {
                 filterTitle: "o que você quer assistir?",
                 matchesTitle: "selecione",
-                subCountries: "países",
-                subPlayers: "jogadores / estrelas",
                 actionPartidas: "partidas",
                 greeting: "Olá! Vamos assistir a esses jogos?",
                 footerMsg: "Monte a sua programação aqui: ",
@@ -368,69 +337,49 @@
             try {
                 const response = await fetch(API_URL);
                 matchesData = await response.json();
-                matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
                 
+                if (!Array.isArray(matchesData)) {
+                    throw new Error("Dados inválidos recebidos da API.");
+                }
+
+                matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
                 buildFilterButtons();
             } catch (error) {
                 console.error("Erro na API: ", error);
-                document.getElementById('container-countries').innerHTML = "Erro.";
-                document.getElementById('container-players').innerHTML = "Erro.";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados. verifique a planilha.</div>";
             }
         }
 
-        // Constrói os botões respeitando de forma estrita o idioma ativo
+        // Nova Lógica: Agrupa países e jogadores em uma única lista visual limpa
         function buildFilterButtons() {
-            const countriesSet = new Set();
-            const playersSet = new Set();
+            const filterSet = new Set();
 
             matchesData.forEach(match => {
-                // Filtro 1: Países únicos baseados no idioma selecionado (has_player === 0)
-                if (Number(match.has_player) === 0) {
-                    const t1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
-                    const t2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
-                    if(t1) countriesSet.add(t1.toUpperCase().trim());
-                    if(t2) countriesSet.add(t2.toUpperCase().trim());
-                } 
-                // Filtro 2: Jogadores / estrelas da coluna filter_especial (has_player === 1)
-                else if (Number(match.has_player) === 1 && match.filter_especial) {
-                    playersSet.add(match.filter_especial.toUpperCase().trim());
-                }
+                // Segurança: previne quebras caso colunas venham em branco ou nulas da planilha
+                const t1 = currentLang === 'EN' ? (match.Team1_EN || "") : (match.Team1_PT || "");
+                const t2 = currentLang === 'EN' ? (match.Team2_EN || "") : (match.Team2_PT || "");
+                const fEspecial = match.filter_especial || "";
+
+                if (t1.trim() !== "") filterSet.add(t1.toUpperCase().trim());
+                if (t2.trim() !== "") filterSet.add(t2.toUpperCase().trim());
+                if (fEspecial.trim() !== "") filterSet.add(fEspecial.toUpperCase().trim());
             });
 
-            // Renderizar Países
-            const countriesContainer = document.getElementById('container-countries');
-            countriesContainer.innerHTML = '';
-            const sortedCountries = Array.from(countriesSet).sort();
+            const container = document.getElementById('container-unificado');
+            container.innerHTML = '';
             
-            sortedCountries.forEach(country => {
-                const btn = document.createElement('div');
-                btn.className = `filter-box ${selectedFilters.has(country) ? 'active' : ''}`;
-                btn.innerText = country;
-                btn.onclick = () => toggleFilter(country, btn);
-                countriesContainer.appendChild(btn);
-            });
-
-            // Preenche as lacunas com "..." vazios simétricos ao wireframe
-            fillBlanks(countriesContainer, sortedCountries.length);
-
-            // Renderizar Estrelas
-            const playersContainer = document.getElementById('container-players');
-            playersContainer.innerHTML = '';
-            const sortedPlayers = Array.from(playersSet).sort();
+            const sortedFilters = Array.from(filterSet).sort();
             
-            sortedPlayers.forEach(player => {
+            sortedFilters.forEach(filterName => {
                 const btn = document.createElement('div');
-                btn.className = `filter-box ${selectedFilters.has(player) ? 'active' : ''}`;
-                btn.innerText = player;
-                btn.onclick = () => toggleFilter(player, btn);
-                playersContainer.appendChild(btn);
+                btn.className = `filter-box ${selectedFilters.has(filterName) ? 'active' : ''}`;
+                btn.innerText = filterName;
+                btn.onclick = () => toggleFilter(filterName, btn);
+                container.appendChild(btn);
             });
 
-            fillBlanks(playersContainer, sortedPlayers.length);
-        }
-
-        function fillBlanks(container, currentLength) {
-            const remainder = currentLength % 3;
+            // Completa os blocos vazios para alinhar de 3 em 3 perfeitamente
+            const remainder = sortedFilters.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
                 for (let i = 0; i < needed; i++) {
@@ -442,7 +391,6 @@
             }
         }
 
-        // Ativa ou desativa filtros permitindo múltipla escolha livre
         function toggleFilter(value, element) {
             if (selectedFilters.has(value)) {
                 selectedFilters.delete(value);
@@ -463,7 +411,7 @@
             renderFilteredMatches();
         }
 
-        // Filtro combinado: Exibe a partida se bater com QUALQUER um dos filtros selecionados
+        // Varre e cruza todos os filtros marcados contra as colunas da planilha
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -474,15 +422,14 @@
                 let showMatch = false;
 
                 if (selectedFilters.size === 0) {
-                    showMatch = true; // Se nenhum filtro foi marcado, lista todos
+                    showMatch = true; // Se não escolheu nada, vê todos
                 } else {
-                    const t1PT = (match.Team1_PT || "").toUpperCase();
-                    const t2PT = (match.Team2_PT || "").toUpperCase();
-                    const t1EN = (match.Team1_EN || "").toUpperCase();
-                    const t2EN = (match.Team2_EN || "").toUpperCase();
-                    const fEspecial = (match.filter_especial || "").toUpperCase();
+                    const t1PT = (match.Team1_PT || "").toUpperCase().trim();
+                    const t2PT = (match.Team2_PT || "").toUpperCase().trim();
+                    const t1EN = (match.Team1_EN || "").toUpperCase().trim();
+                    const t2EN = (match.Team2_EN || "").toUpperCase().trim();
+                    const fEspecial = (match.filter_especial || "").toUpperCase().trim();
 
-                    // Varre cada filtro selecionado contra as colunas alvo
                     for (let filter of selectedFilters) {
                         if (t1PT === filter || t2PT === filter || 
                             t1EN === filter || t2EN === filter || 
@@ -510,8 +457,8 @@
                     card.className = 'match-card';
                     card.innerHTML = `
                         <div class="match-card-content">
-                            <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium}</div>
-                            <div class="match-teams">${team1} VS <span class="match-teams-sm">${team2}</span><span class="match-group-badge">GRP ${match.Group}</span></div>
+                            <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium || ""}</div>
+                            <div class="match-teams">${team1} VS <span class="match-teams-sm">${team2}</span><span class="match-group-badge">GRP ${match.Group || ""}</span></div>
                         </div>
                         <input type="checkbox" class="select-check" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
@@ -520,7 +467,7 @@
             });
 
             if (!hasMatches) {
-                container.innerHTML = `<div class="loading">nenhuma partida correspondente encontrada.</div>`;
+                container.innerHTML = `<div class="loading">nenhuma partida encontrada.</div>`;
             }
 
             updateShareButtonText();
@@ -542,9 +489,7 @@
             document.getElementById('share-btn').innerText = `${textBase} (${count})`;
         }
 
-        // Alternância linguística total limpa e sem refresh
         function toggleLanguage() {
-            // Se mudar de idioma, precisamos mapear os filtros ativos de países para o novo idioma
             const oldFilters = Array.from(selectedFilters);
             selectedFilters.clear();
 
@@ -553,18 +498,16 @@
             
             document.getElementById('filter-title').innerText = dictionary[currentLang].filterTitle;
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
-            document.getElementById('sub-countries').innerText = dictionary[currentLang].subCountries;
-            document.getElementById('sub-players').innerText = dictionary[currentLang].subPlayers;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            // Mapeia filtros antigos se houver equivalência direta na base
+            // Transpõe os filtros de países ativos de uma língua para a outra de forma inteligente
             matchesData.forEach(match => {
-                const sourcePT = [match.Team1_PT?.toUpperCase(), match.Team2_PT?.toUpperCase()];
-                const sourceEN = [match.Team1_EN?.toUpperCase(), match.Team2_EN?.toUpperCase()];
-                const fEsp = match.filter_especial?.toUpperCase();
+                const sourcePT = [(match.Team1_PT || "").toUpperCase(), (match.Team2_PT || "").toUpperCase()];
+                const sourceEN = [(match.Team1_EN || "").toUpperCase(), (match.Team2_EN || "").toUpperCase()];
+                const fEsp = (match.filter_especial || "").toUpperCase();
 
                 oldFilters.forEach(f => {
-                    if (f === fEsp) selectedFilters.add(f); // Nomes de jogadores permanecem idênticos
+                    if (f === fEsp && f !== "") selectedFilters.add(f); 
                     if (currentLang === 'EN' && sourcePT.includes(f)) {
                         const idx = sourcePT.indexOf(f);
                         if (idx !== -1 && sourceEN[idx]) selectedFilters.add(sourceEN[idx]);
@@ -602,7 +545,7 @@
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${timeStr} - ${match.Stadium}\n`;
+                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${timeStr} - ${match.Stadium || ""}\n`;
                 }
             });
 
