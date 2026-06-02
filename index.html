@@ -161,7 +161,6 @@
             opacity: 0.15;
             cursor: default;
             border-style: dashed;
-            transform: none !important;
         }
 
         .match-list-container {
@@ -320,7 +319,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyAh6TFrTPKdoYxR18uaTRF7UreVj2Nqap-9QkDsUNUJ_yQuy-vB6Qmsl5X61C7kFA/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwVe9_mcQPcB6vY7DR05vrs2TAfeey4oytlCf57beKMonV8J-hBdwTT4f6f0rf8C5b9/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -354,7 +353,6 @@
             PT: { mainTitle: "A Copa do Mundo Chegou", filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
-        const locales = { EN: 'en-US', PT: 'pt-BR' };
         const weekdaysMap = {
             EN: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
             PT: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
@@ -362,7 +360,7 @@
 
         async function fetchMatches() {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${API_URL}?_=${Date.now()}`);
                 matchesData = await response.json();
                 buildFilterButtons();
             } catch (error) {
@@ -435,12 +433,11 @@
             renderFilteredMatches();
         }
 
-        // 🌎 LÓGICA ATUALIZADA: Trata a string pura vinda do Sheets de forma 100% resiliente
+        // 🌍 TRATAMENTO NATIVO PURO: Confia na string UTC da planilha sem modificador manual
         function getAdjustedDateTime(rawString) {
             if (!rawString) return null;
             let cleanStr = rawString.trim();
             
-            // Se já não contiver o marcador Z, força o final Z para o JavaScript converter estritamente baseando-se no fuso do leitor
             if (!cleanStr.endsWith("Z") && !cleanStr.includes("+") && !cleanStr.includes("-")) {
                 cleanStr += "Z";
             }
@@ -491,7 +488,7 @@
                         const weekdayIndex = matchDate.getDay();
                         weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                         
-                        // Conversão dinâmica baseada no fuso horário local nativo do aparelho
+                        // Captura a localidade correta sem forçar travas
                         dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
                         timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
