@@ -15,7 +15,7 @@
     <title>2026 Match Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2 family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-blue: #0A1B52;       
@@ -118,7 +118,6 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* Ajuste de Grid compactada para caber sem scroll */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -168,7 +167,6 @@
             width: 100%;
         }
 
-        /* Loading centralizado de bolinhas de futebol animadas */
         .loading-container {
             display: flex;
             justify-content: center;
@@ -192,45 +190,46 @@
             to { transform: scale(1.2); opacity: 1; }
         }
 
-        /* Card de Partidas com Seleção por Toque */
+        /* 🔵 ESTADO PADRÃO: Cards de Partidas começam em Azul e texto Branco */
         .match-card {
-            background: var(--card-white);
-            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--card-white);
             margin-bottom: 12px;
             border-radius: 12px; 
             padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 6px 20px -10px rgba(2, 8, 38, 0.4);
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s ease;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .match-card.selected {
-            border-color: var(--accent-neon);
-            background-color: #EBF2FF;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 22px -8px rgba(204, 255, 0, 0.3);
-        }
-
-        .match-card-content {
-            flex-grow: 1;
-        }
-
-        .match-meta {
+        .match-card .match-meta {
+            color: rgba(255, 255, 255, 0.5);
             font-size: 0.78rem;
-            color: var(--text-muted);
             margin-bottom: 4px;
             font-weight: 500;
+            transition: color 0.2s ease;
         }
 
-        .match-teams {
+        .match-card .match-teams {
             font-size: 1.15rem;
             font-weight: 800; 
-            color: var(--text-dark);
             letter-spacing: -0.3px;
+        }
+
+        /* ⚪ ESTADO SELECIONADO: Inverte para fundo Branco e texto Azul Escuro */
+        .match-card.selected {
+            border-color: var(--accent-neon);
+            background-color: var(--card-white);
+            color: var(--text-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(204, 255, 0, 0.15);
+        }
+
+        .match-card.selected .match-meta {
+            color: var(--text-muted);
         }
 
         .action-bar {
@@ -368,12 +367,10 @@
             }
         }
 
-        // Modificado para ordenar os cards alfabeticamente conforme o idioma selecionado
         function buildFilterButtons() {
             const container = document.getElementById('container-unificado');
             container.innerHTML = '';
 
-            // Clona e ordena o array de opções estáticas alfabeticamente baseado no display ativo
             const sortedOptions = [...fixedOptions].sort((a, b) => {
                 const nameA = currentLang === 'PT' ? a.PT : a.EN;
                 const nameB = currentLang === 'PT' ? b.PT : b.EN;
@@ -410,7 +407,6 @@
                 selectedFilters.add(value);
                 element.classList.add('active');
                 
-                // 📊 EVENTO GA4: Coleta qual opção foi clicada
                 gtag('event', 'selecionar_preferencia', {
                     'item_nome': value
                 });
@@ -491,7 +487,6 @@
                     const isSelected = selectedMatches.has(matchId);
 
                     const card = document.createElement('div');
-                    // Experiência atualizada: controle de classe para seleção por toque visual direto no card
                     card.className = `match-card ${isSelected ? 'selected' : ''}`;
                     card.innerHTML = `
                         <div class="match-card-content">
@@ -500,7 +495,6 @@
                         </div>
                     `;
                     
-                    // Evento de toque substitui o antigo checkbox de controle
                     card.onclick = () => toggleMatchSelection(matchId, card);
                     container.appendChild(card);
                 }
@@ -541,7 +535,6 @@
             currentLang = currentLang === 'EN' ? 'PT' : 'EN';
             document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
             
-            // 📊 EVENTO GA4: Coleta quando a linguagem do app é alterada
             gtag('event', 'alterar_idioma', {
                 'idioma_selecionado': currentLang
             });
@@ -567,7 +560,6 @@
         function shareToWhatsApp() {
             if (selectedMatches.size === 0) return;
 
-            // 📊 EVENTO GA4: Coleta quando a lista é despachada para o WhatsApp
             gtag('event', 'compartilhar_whatsapp', {
                 'quantidade_jogos': selectedMatches.size
             });
