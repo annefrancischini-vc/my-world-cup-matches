@@ -161,6 +161,7 @@
             opacity: 0.15;
             cursor: default;
             border-style: dashed;
+            transform: none !important;
         }
 
         .match-list-container {
@@ -190,7 +191,7 @@
             to { transform: scale(1.2); opacity: 1; }
         }
 
-        /* 🔵 ESTADO PADRÃO: Cards de Partidas começam em Azul e texto Branco */
+        /* 🔵 ESTADO PADRÃO: Cards de Partidas começam transparentes/azuis com texto Branco (Idêntico aos filtros) */
         .match-card {
             background: rgba(255, 255, 255, 0.03);
             color: var(--card-white);
@@ -203,6 +204,11 @@
             cursor: pointer;
             border: 1.5px solid rgba(255, 255, 255, 0.1);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .match-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .match-card .match-meta {
@@ -219,13 +225,13 @@
             letter-spacing: -0.3px;
         }
 
-        /* ⚪ ESTADO SELECIONADO: Inverte para fundo Branco e texto Azul Escuro */
+        /* ⚪ ESTADO SELECIONADO: Inverte para fundo Branco e texto Azul Escuro (Idêntico aos filtros ativos) */
         .match-card.selected {
             border-color: var(--accent-neon);
             background-color: var(--card-white);
             color: var(--text-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(204, 255, 0, 0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(204, 255, 0, 0.15);
         }
 
         .match-card.selected .match-meta {
@@ -283,7 +289,7 @@
 <body>
 
     <header>
-        <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()">PT 🇧🇷</button>
+        <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()">EN 🇺🇸</button>
     </header>
 
     <div class="app-header">
@@ -533,7 +539,7 @@
             selectedMatches.clear();
 
             currentLang = currentLang === 'EN' ? 'PT' : 'EN';
-            document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
+            document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'EN 🇺🇸' : 'PT 🇧🇷';
             
             gtag('event', 'alterar_idioma', {
                 'idioma_selecionado': currentLang
