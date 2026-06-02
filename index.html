@@ -354,6 +354,7 @@
             PT: { mainTitle: "A Copa do Mundo Chegou", filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
+        const locales = { EN: 'en-US', PT: 'pt-BR' };
         const weekdaysMap = {
             EN: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
             PT: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
@@ -434,6 +435,18 @@
             renderFilteredMatches();
         }
 
+        // LÓGICA DE CONVERSÃO DE FUSO HORÁRIO RECALIBRADA BASEADA NO LESTE DOS EUA (EST / UTC-5)
+        function getAdjustedDateTime(rawString) {
+            if (!rawString) return null;
+            
+            // Remove o indicador de fuso "Z" bruto se ele existir para evitar falsos cálculos automáticos do motor JavaScript
+            let cleanStr = rawString.replace("Z", "");
+            
+            // Criamos o objeto de data interpretando o horário da planilha como fuso local do estádio (Central de Nova York - UTC-5 estável)
+            const matchDate = new Date(cleanStr + "-05:00");
+            return matchDate;
+        }
+
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -471,18 +484,15 @@
                     let dateStr = "A definir";
                     let timeStr = "--:--";
                     let weekdayShort = "---";
-                    const rawDate = match.DateTime_UTC || match.DateTime_U;
+                    
+                    const matchDate = getAdjustedDateTime(match.DateTime_UTC || match.DateTime_U);
 
-                    if (rawDate) {
-                        const matchDate = new Date(rawDate);
-                        if (!isNaN(matchDate.getTime())) {
-                            const weekdayIndex = matchDate.getDay();
-                            weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
-                            
-                            // 🌍 CORREÇÃO DE FUSO: Deixa o navegador usar as configurações e o fuso nativo do sistema operacional
-                            dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
-                        }
+                    if (matchDate && !isNaN(matchDate.getTime())) {
+                        const weekdayIndex = matchDate.getDay();
+                        weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
+                        
+                        dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                        timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
                     
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
@@ -577,16 +587,13 @@
                     let dateStr = "";
                     let timeStr = "";
                     let weekday = "";
-                    const rawDate = match.DateTime_UTC || match.DateTime_U;
+                    
+                    const matchDate = getAdjustedDateTime(match.DateTime_UTC || match.DateTime_U);
 
-                    if (rawDate) {
-                        const matchDate = new Date(rawDate);
-                        if (!isNaN(matchDate.getTime())) {
-                            weekday = weekdaysMap[currentLang][matchDate.getDay()];
-                            // 🌍 CORREÇÃO DE FUSO NO SHARE: Garante que o texto enviado vá baseado na hora local do dispositivo de origem
-                            dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
-                        }
+                    if (matchDate && !isNaN(matchDate.getTime())) {
+                        weekday = weekdaysMap[currentLang][matchDate.getDay()];
+                        dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                        timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
 
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
