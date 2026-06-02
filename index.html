@@ -77,7 +77,6 @@
             font-weight: 400;
         }
 
-        /* Estrutura de Grelha Unificada (Seguindo o esqueleto da imagem) */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -256,19 +255,18 @@
                 const response = await fetch(API_URL);
                 matchesData = await response.json();
                 
-                if (!Array.isArray(matchesData)) {
-                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro na leitura das colunas da planilha.</div>";
+                if (!Array.isArray(matchesData) || matchesData.length === 0) {
+                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>Nenhum dado encontrado na planilha.</div>";
                     return;
                 }
 
                 buildFilterButtons();
             } catch (error) {
                 console.error(error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro de ligação à API.</div>";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados.</div>";
             }
         }
 
-        // Mistura Países e filter_especial na mesma lista corrida (Sem títulos ou divisões de categoria)
         function buildFilterButtons() {
             const filterSet = new Set();
 
@@ -295,7 +293,6 @@
                 container.appendChild(btn);
             });
 
-            // Adiciona blocos vazios com "..." para preencher as linhas de 3 colunas perfeitamente
             const remainder = sortedFilters.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
@@ -326,7 +323,6 @@
             renderFilteredMatches();
         }
 
-        // Faz a mágica acontecer: cruza o filtro "HAALAND" contra a coluna filter_especial por baixo dos panos
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -358,8 +354,11 @@
                     let dateStr = "A definir";
                     let weekdayShort = "---";
 
-                    if (match.DateTime_UTC) {
-                        const matchDate = new Date(match.DateTime_UTC);
+                    // Tolerante a falhas: aceita colunas batizadas de DateTime_U ou DateTime_UTC
+                    const rawDate = match.DateTime_UTC || match.DateTime_U;
+
+                    if (rawDate) {
+                        const matchDate = new Date(rawDate);
                         if (!isNaN(matchDate.getTime())) {
                             const weekdayIndex = matchDate.getDay();
                             weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
@@ -369,6 +368,7 @@
                     
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
+                    const matchId = match.ID || "";
 
                     const card = document.createElement('div');
                     card.className = 'match-card';
@@ -377,7 +377,7 @@
                             <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium || ""}</div>
                             <div class="match-teams">${team1} VS <span style="text-transform:lowercase; font-weight:700;">${team2}</span></div>
                         </div>
-                        <input type="checkbox" class="select-check" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
+                        <input type="checkbox" class="select-check" data-id="${matchId}" ${selectedMatches.has(matchId.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
                     container.appendChild(card);
                 }
@@ -438,12 +438,14 @@
             let message = `${dictionary[currentLang].greeting}\n`;
             
             matchesData.forEach(match => {
-                if (selectedMatches.has(match.ID.toString())) {
+                const matchId = match.ID || "";
+                if (selectedMatches.has(matchId.toString())) {
                     let dateStr = "";
                     let weekday = "";
+                    const rawDate = match.DateTime_UTC || match.DateTime_U;
 
-                    if (match.DateTime_UTC) {
-                        const matchDate = new Date(match.DateTime_UTC);
+                    if (rawDate) {
+                        const matchDate = new Date(rawDate);
                         if (!isNaN(matchDate.getTime())) {
                             weekday = weekdaysMap[currentLang][matchDate.getDay()];
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
