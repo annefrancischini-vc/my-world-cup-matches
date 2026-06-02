@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HM3M9HL8PP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM3M9HL8PP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-HM3M9HL8PP');
-</script>
+      gtag('config', 'G-HM3M9HL8PP');
+    </script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026 Match Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2 family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-blue: #0A1B52;       /* Azul marinho profundo e moderno */
+            --bg-blue: #0A1B52;       
             --bg-gradient: linear-gradient(135deg, #0A1B52 0%, #050D2B 100%);
             --card-white: #FFFFFF;
-            --accent-neon: #CCFF00;   /* Amarelo/Verde limão elétrico vibrante */
-            --text-dark: #0F172A;     /* Tom de cinza escuro premium para leitura */
-            --text-muted: #64748B;    /* Cinza suave para metadados */
+            --accent-neon: #CCFF00;   
+            --text-dark: #0F172A;     
+            --text-muted: #64748B;    
             --border-subtle: rgba(255, 255, 255, 0.08);
         }
 
@@ -50,7 +49,7 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
-            padding: 24px 20px 10px;
+            padding: 20px 20px 5px;
             display: flex;
             justify-content: flex-end;
             z-index: 10;
@@ -60,10 +59,10 @@
             background: rgba(255, 255, 255, 0.06);
             border: 1.5px solid rgba(255, 255, 255, 0.2);
             color: var(--card-white);
-            padding: 8px 16px;
+            padding: 6px 14px;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 20px; /* Botão oval moderno */
+            border-radius: 20px; 
             text-transform: uppercase;
             font-size: 0.75rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -76,11 +75,35 @@
             background: rgba(204, 255, 0, 0.05);
         }
 
+        .app-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .stars {
+            color: var(--accent-neon);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .app-main-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--card-white);
+            margin-bottom: 8px;
+        }
+
         main {
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
-            padding: 10px 20px 140px;
+            padding: 0 20px 140px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -89,18 +112,17 @@
 
         .page-title {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 400;
-            letter-spacing: -0.5px;
-            margin-bottom: 32px;
-            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        /* Grelha de Filtros Estilo Card Moderno */
+        /* Ajuste de Grid compactada para caber sem scroll */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
         }
 
@@ -108,106 +130,118 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
             color: rgba(255, 255, 255, 0.8);
-            padding: 15px 5px;
+            padding: 10px 4px;
             text-align: center;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 75px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 62px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px; /* Cantos arredondados modernos */
+            border-radius: 12px; 
         }
 
         .filter-box:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.25);
-            color: var(--card-white);
         }
 
         .filter-box.active {
             background: var(--card-white);
             color: var(--text-dark);
             border-color: var(--accent-neon);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(204, 255, 0, 0.15);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.3);
             font-weight: 700;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .filter-box.disabled {
             opacity: 0.15;
             cursor: default;
             border-style: dashed;
-            transform: none !important;
         }
 
         .match-list-container {
             width: 100%;
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--accent-neon);
-            font-weight: 500;
-            font-size: 0.95rem;
+        /* Loading centralizado de bolinhas de futebol animadas */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 60px 0;
+            grid-column: span 3;
+            width: 100%;
         }
 
-        /* Card de Partidas Modernizado */
+        .soccer-ball {
+            font-size: 1.5rem;
+            animation: pulseBall 0.6s infinite alternate;
+        }
+
+        .soccer-ball:nth-child(2) { animation-delay: 0.2s; }
+        .soccer-ball:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulseBall {
+            from { transform: scale(0.8); opacity: 0.4; }
+            to { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Card de Partidas com Seleção por Toque */
         .match-card {
             background: var(--card-white);
             color: var(--text-dark);
-            margin-bottom: 14px;
-            border-radius: 12px; /* Arredondado suave */
-            padding: 20px;
+            margin-bottom: 12px;
+            border-radius: 12px; 
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 30px -10px rgba(2, 8, 38, 0.5);
-            transition: transform 0.2s ease;
+            box-shadow: 0 6px 20px -10px rgba(2, 8, 38, 0.4);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .match-card.selected {
+            border-color: var(--accent-neon);
+            background-color: #EBF2FF;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px -8px rgba(204, 255, 0, 0.3);
         }
 
         .match-card-content {
             flex-grow: 1;
-            padding-right: 15px;
         }
 
         .match-meta {
             font-size: 0.78rem;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
 
         .match-teams {
-            font-size: 1.2rem;
-            font-weight: 800; /* Destaque apenas nos times */
+            font-size: 1.15rem;
+            font-weight: 800; 
             color: var(--text-dark);
             letter-spacing: -0.3px;
         }
 
-        /* Checkbox Redonda e Elegante */
-        .select-check {
-            height: 24px;
-            width: 24px;
-            cursor: pointer;
-            accent-color: #0F3097;
-            border-radius: 50%;
-        }
-
-        /* Barra de Ações Inferior Suspensa */
         .action-bar {
             position: fixed;
-            bottom: 24px; /* Flutuando levemente acima do fundo */
+            bottom: 24px; 
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 560px;
             background: rgba(10, 27, 82, 0.85);
-            padding: 16px;
+            padding: 14px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-radius: 16px;
@@ -222,7 +256,7 @@
             background: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 16px 32px;
+            padding: 14px 32px;
             font-size: 0.95rem;
             font-weight: 700;
             cursor: not-allowed;
@@ -253,10 +287,19 @@
         <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()">PT 🇧🇷</button>
     </header>
 
+    <div class="app-header">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="app-main-title" id="app-main-title">A Copa do Mundo Chegou</div>
+    </div>
+
     <main id="screen-filter">
         <h1 class="page-title" id="filter-title">o que você quer assistir?</h1>
         <div class="filter-grid" id="container-unificado">
-            <div class="loading">buscando opções de jogos...</div>
+            <div class="loading-container" id="loading-spinner">
+                <div class="soccer-ball">⚽</div>
+                <div class="soccer-ball">⚽</div>
+                <div class="soccer-ball">⚽</div>
+            </div>
         </div>
     </main>
 
@@ -266,7 +309,7 @@
     </main>
 
     <div class="action-bar" id="action-bar-filter">
-        <button class="action-btn" onclick="showMatchesScreen()" id="btn-partidas">partidas</button>
+        <button class="action-btn" onclick="showMatchesScreen()" id="btn-partidas">ver partidas</button>
     </div>
 
     <div class="action-bar" id="action-bar-whatsapp" style="display:none;">
@@ -304,8 +347,8 @@
         ];
 
         const dictionary = {
-            EN: { filterTitle: "what do you want to watch?", matchesTitle: "select the matches", actionPartidas: "view matches", greeting: "Hello! Let's watch these matches?\n", footerMsg: "Plan yours here: ", shareBtnBase: "share on whatsapp" },
-            PT: { filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
+            EN: { mainTitle: "The World Cup Has Arrived", filterTitle: "what do you want to watch?", matchesTitle: "select the matches", actionPartidas: "view matches", greeting: "Hello! Let's watch these matches?\n", footerMsg: "Plan yours here: ", shareBtnBase: "share on whatsapp" },
+            PT: { mainTitle: "A Copa do Mundo Chegou", filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
         const locales = { EN: 'en-US', PT: 'pt-BR' };
@@ -325,11 +368,19 @@
             }
         }
 
+        // Modificado para ordenar os cards alfabeticamente conforme o idioma selecionado
         function buildFilterButtons() {
             const container = document.getElementById('container-unificado');
             container.innerHTML = '';
 
-            fixedOptions.forEach(opt => {
+            // Clona e ordena o array de opções estáticas alfabeticamente baseado no display ativo
+            const sortedOptions = [...fixedOptions].sort((a, b) => {
+                const nameA = currentLang === 'PT' ? a.PT : a.EN;
+                const nameB = currentLang === 'PT' ? b.PT : b.EN;
+                return nameA.localeCompare(nameB);
+            });
+
+            sortedOptions.forEach(opt => {
                 const displayName = currentLang === 'PT' ? opt.PT : opt.EN;
                 const btn = document.createElement('div');
                 btn.className = `filter-box ${selectedFilters.has(displayName) ? 'active' : ''}`;
@@ -338,7 +389,7 @@
                 container.appendChild(btn);
             });
 
-            const remainder = fixedOptions.length % 3;
+            const remainder = sortedOptions.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
                 for (let i = 0; i < needed; i++) {
@@ -358,6 +409,11 @@
             } else {
                 selectedFilters.add(value);
                 element.classList.add('active');
+                
+                // 📊 EVENTO GA4: Coleta qual opção foi clicada
+                gtag('event', 'selecionar_preferencia', {
+                    'item_nome': value
+                });
             }
             validateFilterButton();
         }
@@ -422,27 +478,30 @@
                         const matchDate = new Date(rawDate);
                         if (!isNaN(matchDate.getTime())) {
                             const weekdayIndex = matchDate.getDay();
-                            // Captura abreviação da semana (ex: seg, ter, qua)
                             weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                            // Captura horário no fuso do aparelho do usuário (Formato 24h)
                             timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
                     
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
-                    const matchId = match.ID || "";
+                    const matchId = String(match.ID || "");
+
+                    const isSelected = selectedMatches.has(matchId);
 
                     const card = document.createElement('div');
-                    card.className = 'match-card';
+                    // Experiência atualizada: controle de classe para seleção por toque visual direto no card
+                    card.className = `match-card ${isSelected ? 'selected' : ''}`;
                     card.innerHTML = `
                         <div class="match-card-content">
                             <div class="match-meta">${weekdayShort}, ${dateStr} - ${timeStr} • ${match.Stadium || ""}</div>
                             <div class="match-teams">${team1} × ${team2}</div>
                         </div>
-                        <input type="checkbox" class="select-check" data-id="${matchId}" ${selectedMatches.has(matchId.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
+                    
+                    // Evento de toque substitui o antigo checkbox de controle
+                    card.onclick = () => toggleMatchSelection(matchId, card);
                     container.appendChild(card);
                 }
             });
@@ -453,10 +512,14 @@
             validateWhatsappButton();
         }
 
-        function handleSelect(checkbox) {
-            const id = checkbox.getAttribute('data-id');
-            if (checkbox.checked) selectedMatches.add(id);
-            else selectedMatches.delete(id);
+        function toggleMatchSelection(matchId, element) {
+            if (selectedMatches.has(matchId)) {
+                selectedMatches.delete(matchId);
+                element.classList.remove('selected');
+            } else {
+                selectedMatches.add(matchId);
+                element.classList.add('selected');
+            }
             validateWhatsappButton();
         }
 
@@ -478,6 +541,12 @@
             currentLang = currentLang === 'EN' ? 'PT' : 'EN';
             document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
             
+            // 📊 EVENTO GA4: Coleta quando a linguagem do app é alterada
+            gtag('event', 'alterar_idioma', {
+                'idioma_selecionado': currentLang
+            });
+
+            document.getElementById('app-main-title').innerText = dictionary[currentLang].mainTitle;
             document.getElementById('filter-title').innerText = dictionary[currentLang].filterTitle;
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
@@ -495,9 +564,13 @@
             }
         }
 
-        // DESIGN REESTRUTURADO DO ZAP CONFORME O SEU MODELO SOLICITADO
         function shareToWhatsApp() {
             if (selectedMatches.size === 0) return;
+
+            // 📊 EVENTO GA4: Coleta quando a lista é despachada para o WhatsApp
+            gtag('event', 'compartilhar_whatsapp', {
+                'quantidade_jogos': selectedMatches.size
+            });
 
             let message = `${dictionary[currentLang].greeting}\n`;
             
@@ -521,7 +594,6 @@
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    // Formato idêntico ao solicitado com Emojis e quebras limpas
                     message += `📅 ${weekday}, ${dateStr} - ${timeStr}\n`;
                     message += `⚽ ${team1} × ${team2}\n\n`;
                 }
