@@ -320,7 +320,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwVe9_mcQPcB6vY7DR05vrs2TAfeey4oytlCf57beKMonV8J-hBdwTT4f6f0rf8C5b9/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbyAh6TFrTPKdoYxR18uaTRF7UreVj2Nqap-9QkDsUNUJ_yQuy-vB6Qmsl5X61C7kFA/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -435,16 +435,15 @@
             renderFilteredMatches();
         }
 
-        // 🌍 NOVA ESTRATÉGIA DE CONVERSÃO NATIVA PURA (LÊ COMO UTC REAL)
+        // 🌎 LÓGICA ATUALIZADA: Trata a string pura vinda do Sheets de forma 100% resiliente
         function getAdjustedDateTime(rawString) {
             if (!rawString) return null;
-            
             let cleanStr = rawString.trim();
-            // Se a string não terminar com Z, nós adicionamos para garantir a interpretação UTC padrão
-            if (!cleanStr.endsWith("Z")) {
+            
+            // Se já não contiver o marcador Z, força o final Z para o JavaScript converter estritamente baseando-se no fuso do leitor
+            if (!cleanStr.endsWith("Z") && !cleanStr.includes("+") && !cleanStr.includes("-")) {
                 cleanStr += "Z";
             }
-            
             return new Date(cleanStr);
         }
 
@@ -486,12 +485,13 @@
                     let timeStr = "--:--";
                     let weekdayShort = "---";
                     
-                    const matchDate = getAdjustedDateTime(match.DateTime_UTC || match.DateTime_U);
+                    const matchDate = getAdjustedDateTime(match.DateTime_UTC);
 
                     if (matchDate && !isNaN(matchDate.getTime())) {
                         const weekdayIndex = matchDate.getDay();
                         weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                         
+                        // Conversão dinâmica baseada no fuso horário local nativo do aparelho
                         dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
                         timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
@@ -589,7 +589,7 @@
                     let timeStr = "";
                     let weekday = "";
                     
-                    const matchDate = getAdjustedDateTime(match.DateTime_UTC || match.DateTime_U);
+                    const matchDate = getAdjustedDateTime(match.DateTime_UTC);
 
                     if (matchDate && !isNaN(matchDate.getTime())) {
                         weekday = weekdaysMap[currentLang][matchDate.getDay()];
