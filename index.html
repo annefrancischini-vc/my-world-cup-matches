@@ -77,6 +77,7 @@
             font-weight: 400;
         }
 
+        /* Estrutura de Grelha Unificada (Seguindo o esqueleto da imagem) */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -161,16 +162,6 @@
             text-transform: uppercase;
         }
 
-        .match-group-badge {
-            background: var(--bg-blue);
-            color: var(--accent-neon);
-            padding: 1px 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-left: 8px;
-            display: inline-block;
-        }
-
         .select-check {
             height: 24px;
             width: 24px;
@@ -241,7 +232,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzj4lfq65jlkGTHEoWuBLp_exK_PfM3br9xAIV2Scz3OGlvQ8bumwsYsa-L3binDxnf/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxW17Ij-ZSbHrS2xVogZQoFJ19HGqiIwgNBt4gE6Zu0z92BRY5rXkGuC8-N9sAvVng/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -266,17 +257,18 @@
                 matchesData = await response.json();
                 
                 if (!Array.isArray(matchesData)) {
-                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>Planilha vazia ou com erro de colunas.</div>";
+                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro na leitura das colunas da planilha.</div>";
                     return;
                 }
 
                 buildFilterButtons();
             } catch (error) {
                 console.error(error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro de conexão com a API.</div>";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro de ligação à API.</div>";
             }
         }
 
+        // Mistura Países e filter_especial na mesma lista corrida (Sem títulos ou divisões de categoria)
         function buildFilterButtons() {
             const filterSet = new Set();
 
@@ -303,6 +295,7 @@
                 container.appendChild(btn);
             });
 
+            // Adiciona blocos vazios com "..." para preencher as linhas de 3 colunas perfeitamente
             const remainder = sortedFilters.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
@@ -333,6 +326,7 @@
             renderFilteredMatches();
         }
 
+        // Faz a mágica acontecer: cruza o filtro "HAALAND" contra a coluna filter_especial por baixo dos panos
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -362,7 +356,6 @@
                     hasMatches = true;
                     
                     let dateStr = "A definir";
-                    let timeStr = "--:--";
                     let weekdayShort = "---";
 
                     if (match.DateTime_UTC) {
@@ -371,7 +364,6 @@
                             const weekdayIndex = matchDate.getDay();
                             weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
                     
@@ -383,7 +375,7 @@
                     card.innerHTML = `
                         <div class="match-card-content">
                             <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium || ""}</div>
-                            <div class="match-teams">${team1} VS <span style="text-transform:lowercase; font-weight:700;">${team2}</span><span class="match-group-badge">GRP ${match.Group || ""}</span></div>
+                            <div class="match-teams">${team1} VS <span style="text-transform:lowercase; font-weight:700;">${team2}</span></div>
                         </div>
                         <input type="checkbox" class="select-check" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
@@ -448,7 +440,6 @@
             matchesData.forEach(match => {
                 if (selectedMatches.has(match.ID.toString())) {
                     let dateStr = "";
-                    let timeStr = "";
                     let weekday = "";
 
                     if (match.DateTime_UTC) {
@@ -456,14 +447,13 @@
                         if (!isNaN(matchDate.getTime())) {
                             weekday = weekdaysMap[currentLang][matchDate.getDay()];
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
 
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${timeStr} - ${match.Stadium || ""}\n`;
+                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${match.Stadium || ""}\n`;
                 }
             });
 
