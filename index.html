@@ -6,16 +6,16 @@
     <title>2026 Match Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-blue: #0F3097;
-            --bg-darker: #0A226B;
+            --bg-blue: #0A1B52;       /* Azul marinho profundo e moderno */
+            --bg-gradient: linear-gradient(135deg, #0A1B52 0%, #050D2B 100%);
             --card-white: #FFFFFF;
-            --accent-neon: #D4FF00;
-            --text-dark: #051238;
-            --text-muted: #627293;
-            --kit-white: #EBF0FF;
+            --accent-neon: #CCFF00;   /* Amarelo/Verde limão elétrico vibrante */
+            --text-dark: #0F172A;     /* Tom de cinza escuro premium para leitura */
+            --text-muted: #64748B;    /* Cinza suave para metadados */
+            --border-subtle: rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -23,11 +23,12 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
             background-color: var(--bg-blue);
-            background-image: linear-gradient(135deg, var(--bg-blue) 0%, var(--bg-darker) 100%);
+            background-image: var(--bg-gradient);
             color: var(--card-white);
             min-height: 100vh;
             display: flex;
@@ -46,22 +47,30 @@
         }
 
         .lang-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--accent-neon);
-            color: var(--accent-neon);
-            padding: 6px 14px;
-            font-weight: 700;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: var(--card-white);
+            padding: 8px 16px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 0px;
+            border-radius: 20px; /* Botão oval moderno */
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+            background: rgba(204, 255, 0, 0.05);
         }
 
         main {
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
-            padding: 0 20px 140px;
+            padding: 10px 20px 140px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -70,13 +79,14 @@
 
         .page-title {
             text-align: center;
-            font-size: 1.4rem;
-            text-transform: lowercase;
-            margin-bottom: 30px;
-            color: var(--card-white);
+            font-size: 1.5rem;
             font-weight: 400;
+            letter-spacing: -0.5px;
+            margin-bottom: 32px;
+            color: rgba(255, 255, 255, 0.95);
         }
 
+        /* Grelha de Filtros Estilo Card Moderno */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -85,34 +95,43 @@
         }
 
         .filter-box {
-            background: rgba(255, 255, 255, 0.04);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            color: var(--card-white);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: rgba(255, 255, 255, 0.8);
             padding: 15px 5px;
             text-align: center;
             cursor: pointer;
-            font-size: 0.80rem;
-            font-weight: 700;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
-            transition: all 0.15s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0px;
+            border-radius: 12px; /* Cantos arredondados modernos */
+        }
+
+        .filter-box:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--card-white);
         }
 
         .filter-box.active {
             background: var(--card-white);
             color: var(--text-dark);
             border-color: var(--accent-neon);
-            font-weight: 900;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(204, 255, 0, 0.15);
+            font-weight: 700;
+            transform: translateY(-2px);
         }
 
         .filter-box.disabled {
-            opacity: 0.2;
+            opacity: 0.15;
             cursor: default;
             border-style: dashed;
+            transform: none !important;
         }
 
         .match-list-container {
@@ -123,22 +142,22 @@
             text-align: center;
             padding: 40px;
             color: var(--accent-neon);
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: lowercase;
+            font-weight: 500;
+            font-size: 0.95rem;
         }
 
+        /* Card de Partidas Modernizado */
         .match-card {
             background: var(--card-white);
             color: var(--text-dark);
             margin-bottom: 14px;
-            border-radius: 0px;
-            border-left: 6px solid var(--bg-blue);
-            padding: 18px 20px;
+            border-radius: 12px; /* Arredondado suave */
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 6px 18px rgba(5, 18, 56, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(2, 8, 38, 0.5);
+            transition: transform 0.2s ease;
         }
 
         .match-card-content {
@@ -147,35 +166,43 @@
         }
 
         .match-meta {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            text-transform: lowercase;
-            margin-bottom: 4px;
-            font-weight: 600;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .match-teams {
-            font-size: 1.15rem;
-            font-weight: 900;
+            font-size: 1.2rem;
+            font-weight: 800; /* Destaque apenas nos times */
             color: var(--text-dark);
-            text-transform: uppercase;
+            letter-spacing: -0.3px;
         }
 
+        /* Checkbox Redonda e Elegante */
         .select-check {
             height: 24px;
             width: 24px;
             cursor: pointer;
-            accent-color: var(--bg-blue);
+            accent-color: #0F3097;
+            border-radius: 50%;
         }
 
+        /* Barra de Ações Inferior Suspensa */
         .action-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-darker);
-            padding: 24px 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.05);
+            bottom: 24px; /* Flutuando levemente acima do fundo */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 560px;
+            background: rgba(10, 27, 82, 0.85);
+            padding: 16px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
             z-index: 1000;
@@ -184,26 +211,29 @@
         .action-btn {
             background: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            padding: 16px 40px;
-            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 32px;
+            font-size: 0.95rem;
             font-weight: 700;
-            text-transform: lowercase;
             cursor: not-allowed;
             width: 100%;
-            max-width: 560px;
-            border-radius: 0px;
+            border-radius: 12px;
             text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
         }
 
         .action-btn.enabled {
             background: var(--accent-neon);
-            color: var(--text-dark);
+            color: #0A1B52;
             border-color: var(--accent-neon);
-            font-weight: 900;
+            box-shadow: 0 8px 20px -4px rgba(204, 255, 0, 0.4);
             cursor: pointer;
             pointer-events: auto;
+        }
+
+        .action-btn.enabled:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -221,7 +251,7 @@
     </main>
 
     <main id="screen-matches" style="display:none;">
-        <h1 class="page-title" id="matches-title">selecione</h1>
+        <h1 class="page-title" id="matches-title">selecione as partidas</h1>
         <div class="match-list-container" id="matches-container"></div>
     </main>
 
@@ -242,7 +272,6 @@
         const selectedFilters = new Set();
         const selectedMatches = new Set();
 
-        // Lista estrita de 18 opções solicitadas (mapeamento PT <-> EN correspondente)
         const fixedOptions = [
             { PT: "ALEMANHA", EN: "GERMANY", type: "country" },
             { PT: "ARGENTINA", EN: "ARGENTINA", type: "country" },
@@ -265,14 +294,14 @@
         ];
 
         const dictionary = {
-            EN: { filterTitle: "what do you want to watch?", matchesTitle: "select", actionPartidas: "matches", greeting: "Hello! Let's watch these matches?", footerMsg: "Plan yours here: ", shareBtnBase: "send via whatsapp" },
-            PT: { filterTitle: "o que você quer assistir?", matchesTitle: "selecione", actionPartidas: "partidas", greeting: "Olá! Vamos assistir a esses jogos?", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
+            EN: { filterTitle: "what do you want to watch?", matchesTitle: "select the matches", actionPartidas: "view matches", greeting: "Hello! Let's watch these matches?\n", footerMsg: "Plan yours here: ", shareBtnBase: "share on whatsapp" },
+            PT: { filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
         const locales = { EN: 'en-US', PT: 'pt-BR' };
         const weekdaysMap = {
             EN: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-            PT: ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
+            PT: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
         };
 
         async function fetchMatches() {
@@ -286,22 +315,29 @@
             }
         }
 
-        // Renderiza exatamente as 18 opções na tela sem divisões de categorias
         function buildFilterButtons() {
             const container = document.getElementById('container-unificado');
             container.innerHTML = '';
 
             fixedOptions.forEach(opt => {
                 const displayName = currentLang === 'PT' ? opt.PT : opt.EN;
-                
                 const btn = document.createElement('div');
-                // Mantém o estado ativo persistente se o valor estiver no Set
                 btn.className = `filter-box ${selectedFilters.has(displayName) ? 'active' : ''}`;
                 btn.innerText = displayName;
                 btn.onclick = () => toggleFilter(displayName, btn);
                 container.appendChild(btn);
             });
 
+            const remainder = fixedOptions.length % 3;
+            if (remainder !== 0) {
+                const needed = 3 - remainder;
+                for (let i = 0; i < needed; i++) {
+                    const blank = document.createElement('div');
+                    blank.className = 'filter-box disabled';
+                    blank.innerText = '...';
+                    container.appendChild(blank);
+                }
+            }
             validateFilterButton();
         }
 
@@ -316,7 +352,6 @@
             validateFilterButton();
         }
 
-        // Validação estrita: Habilita o botão se houver pelo menos uma opção selecionada
         function validateFilterButton() {
             const btn = document.getElementById('btn-partidas');
             if (selectedFilters.size > 0) {
@@ -334,7 +369,6 @@
             renderFilteredMatches();
         }
 
-        // Realiza o cruzamento cirúrgico dos filtros com as colunas certas do JSON
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -343,26 +377,22 @@
             matchesData.forEach(match => {
                 let showMatch = false;
 
-                // Varre cada filtro ativado pelo usuário
+                const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
+                const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
+                const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
+                const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
+                const fEspecial = String(match.filter_especial || "").toUpperCase().trim();
+
                 for (let filter of selectedFilters) {
-                    // Encontra a regra desse filtro na nossa matriz de configurações fixedOptions
                     const foundOpt = fixedOptions.find(o => o.PT === filter || o.EN === filter);
                     if (!foundOpt) continue;
 
                     if (foundOpt.type === "player") {
-                        // Se for um jogador, valida estritamente a coluna filter_especial
-                        const specVal = String(match.filter_especial || "").toUpperCase().trim();
-                        if (specVal === foundOpt.PT) { // na base é sempre igual ao id PT
+                        if (fEspecial === foundOpt.PT) {
                             showMatch = true;
                             break;
                         }
                     } else {
-                        // Se for país, valida nas colunas dos times dependendo da língua
-                        const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
-                        const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
-                        const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
-                        const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
-
                         if (t1PT === foundOpt.PT || t2PT === foundOpt.PT || t1EN === foundOpt.EN || t2EN === foundOpt.EN) {
                             showMatch = true;
                             break;
@@ -374,6 +404,7 @@
                     hasMatches = true;
                     
                     let dateStr = "A definir";
+                    let timeStr = "--:--";
                     let weekdayShort = "---";
                     const rawDate = match.DateTime_UTC || match.DateTime_U;
 
@@ -381,8 +412,11 @@
                         const matchDate = new Date(rawDate);
                         if (!isNaN(matchDate.getTime())) {
                             const weekdayIndex = matchDate.getDay();
-                            weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
+                            // Captura abreviação da semana (ex: seg, ter, qua)
+                            weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                            // Captura horário no fuso do aparelho do usuário (Formato 24h)
+                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
                     
@@ -394,8 +428,8 @@
                     card.className = 'match-card';
                     card.innerHTML = `
                         <div class="match-card-content">
-                            <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium || ""}</div>
-                            <div class="match-teams">${team1} VS <span style="text-transform:lowercase; font-weight:700;">${team2}</span></div>
+                            <div class="match-meta">${weekdayShort}, ${dateStr} - ${timeStr} • ${match.Stadium || ""}</div>
+                            <div class="match-teams">${team1} × ${team2}</div>
                         </div>
                         <input type="checkbox" class="select-check" data-id="${matchId}" ${selectedMatches.has(matchId.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
@@ -426,7 +460,6 @@
             }
         }
 
-        // Alternância linguística que preserva os filtros selecionados convertendo-os de forma inteligente
         function toggleLanguage() {
             const oldFilters = Array.from(selectedFilters);
             selectedFilters.clear();
@@ -439,7 +472,6 @@
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            // Transpõe a seleção ativa para o novo idioma correspondente
             oldFilters.forEach(f => {
                 const found = fixedOptions.find(o => o.PT === f || o.EN === f);
                 if (found) {
@@ -453,6 +485,7 @@
             }
         }
 
+        // DESIGN REESTRUTURADO DO ZAP CONFORME O SEU MODELO SOLICITADO
         function shareToWhatsApp() {
             if (selectedMatches.size === 0) return;
 
@@ -462,6 +495,7 @@
                 const matchId = match.ID || "";
                 if (selectedMatches.has(matchId.toString())) {
                     let dateStr = "";
+                    let timeStr = "";
                     let weekday = "";
                     const rawDate = match.DateTime_UTC || match.DateTime_U;
 
@@ -470,17 +504,20 @@
                         if (!isNaN(matchDate.getTime())) {
                             weekday = weekdaysMap[currentLang][matchDate.getDay()];
                             dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
 
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${match.Stadium || ""}\n`;
+                    // Formato idêntico ao solicitado com Emojis e quebras limpas
+                    message += `📅 ${weekday}, ${dateStr} - ${timeStr}\n`;
+                    message += `⚽ ${team1} × ${team2}\n\n`;
                 }
             });
 
-            message += `\n${dictionary[currentLang].footerMsg}${GITHUB_PAGES_URL}`;
+            message += `${dictionary[currentLang].footerMsg}${GITHUB_PAGES_URL}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
         }
 
