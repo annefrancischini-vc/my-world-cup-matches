@@ -97,7 +97,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* Grid Única de Filtros (Sem divisões de categorias) */
+        /* Grid Única de Filtros Sem Divisões de Categorias */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -121,7 +121,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0px; /* Design seco e reto */
+            border-radius: 0px; /* Cantos vivos e secos */
         }
 
         .filter-box:hover {
@@ -300,7 +300,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzUrHvILOxOBaNsK5OWR4K4Oh487qeGAa7fxD7koqv1MfmJlyLpeuUExk7RAOT-Wll_/exec";
+        // URL ATUALIZADA DA SUA API DO GOOGLE
+        const API_URL = "https://script.google.com/macros/s/AKfycbzycmTZFSYxA-g5HL1kJ-6QZoU_HQcU2ncMKsZWMwamuzUMhkGWE6Ie6lNL8G0Q2bqC/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -339,23 +340,22 @@
                 matchesData = await response.json();
                 
                 if (!Array.isArray(matchesData)) {
-                    throw new Error("Dados inválidos recebidos da API.");
+                    throw new Error("Formato inválido recebido.");
                 }
 
                 matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
                 buildFilterButtons();
             } catch (error) {
                 console.error("Erro na API: ", error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados. verifique a planilha.</div>";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados. verifique a publicação do seu app script.</div>";
             }
         }
 
-        // Nova Lógica: Agrupa países e jogadores em uma única lista visual limpa
+        // Agrupa países e jogadores de forma invisível em uma lista alfabética corrida
         function buildFilterButtons() {
             const filterSet = new Set();
 
             matchesData.forEach(match => {
-                // Segurança: previne quebras caso colunas venham em branco ou nulas da planilha
                 const t1 = currentLang === 'EN' ? (match.Team1_EN || "") : (match.Team1_PT || "");
                 const t2 = currentLang === 'EN' ? (match.Team2_EN || "") : (match.Team2_PT || "");
                 const fEspecial = match.filter_especial || "";
@@ -378,7 +378,7 @@
                 container.appendChild(btn);
             });
 
-            // Completa os blocos vazios para alinhar de 3 em 3 perfeitamente
+            // Completa os blocos vazios com "..." para manter o padrão visual de 3 colunas
             const remainder = sortedFilters.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
@@ -411,7 +411,7 @@
             renderFilteredMatches();
         }
 
-        // Varre e cruza todos os filtros marcados contra as colunas da planilha
+        // Varre múltiplos filtros contra os times e a coluna filter_especial (Ex: Haaland = Noruega)
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -422,7 +422,7 @@
                 let showMatch = false;
 
                 if (selectedFilters.size === 0) {
-                    showMatch = true; // Se não escolheu nada, vê todos
+                    showMatch = true; // Se nenhum card for selecionado, exibe toda a tabela
                 } else {
                     const t1PT = (match.Team1_PT || "").toUpperCase().trim();
                     const t2PT = (match.Team2_PT || "").toUpperCase().trim();
@@ -500,7 +500,7 @@
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            // Transpõe os filtros de países ativos de uma língua para a outra de forma inteligente
+            // Altera os nomes dos botões de países de idioma sem perder as seleções ativas do usuário
             matchesData.forEach(match => {
                 const sourcePT = [(match.Team1_PT || "").toUpperCase(), (match.Team2_PT || "").toUpperCase()];
                 const sourceEN = [(match.Team1_EN || "").toUpperCase(), (match.Team2_EN || "").toUpperCase()];
