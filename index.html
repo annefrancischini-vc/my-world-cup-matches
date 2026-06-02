@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026 Match Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chalan:wght@700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-blue: #0A1931;       /* Deep iconic 2002 royal/navy blue */
+            --bg-blue: #0A1931;       /* Azul marinho icônico da camisa de 2002 */
             --card-white: #FFFFFF;
-            --accent-neon: #CCFF00;   /* Vibrant neon yellow/green accent */
+            --accent-neon: #CCFF00;   /* Amarelo/Verde Neon */
             --text-dark: #121212;
             --text-muted: #666666;
-            --border-blue: #0052CC;   /* Classic CBF Royal Blue */
+            --border-blue: #0052CC;   /* Azul Royal */
         }
 
         * {
@@ -38,8 +38,7 @@
             width: 100%;
             padding: 20px;
             display: flex;
-            justify-content: flex-end; /* Align lang button right */
-            align-items: center;
+            justify-content: flex-end;
         }
 
         .lang-btn {
@@ -54,65 +53,74 @@
             font-size: 0.8rem;
         }
 
-        .lang-btn:hover {
-            background: var(--accent-neon);
-            color: var(--bg-blue);
-        }
-
         main {
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            padding: 0 20px 100px;
+            padding: 0 20px 120px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
         .page-title {
             text-align: center;
             font-size: 1.3rem;
             text-transform: lowercase;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: var(--card-white);
+            font-weight: 400;
         }
 
-        /* Screen 1: Filter Grid */
+        .section-subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-neon);
+            margin: 20px 0 10px;
+            font-weight: 600;
+        }
+
+        /* Grid de Filtros com botões idênticos ao desenho */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
             width: 100%;
-            max-width: 600px;
+            margin-bottom: 20px;
         }
 
         .filter-box {
-            background: rgba(255, 255, 255, 0.05); /* Lighter grey-blue background */
+            background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.1);
             color: var(--card-white);
-            padding: 20px;
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             transition: all 0.2s ease;
-            height: 80px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 4px;
+        }
+
+        .filter-box:hover {
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .filter-box.active {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--accent-neon);
+            color: var(--bg-blue);
             border-color: var(--accent-neon);
         }
 
-        /* Screen 2: Match Cards */
+        /* Tela de Partidas */
         .match-list-container {
             width: 100%;
-            display: none; /* Default hidden */
         }
 
         .loading {
@@ -125,14 +133,14 @@
         .match-card {
             background: var(--card-white);
             color: var(--text-dark);
-            margin-bottom: 16px;
-            border-radius: 0; /* Sharp edges */
+            margin-bottom: 14px;
+            border-radius: 0; /* Bordas secas do desenho */
             border-left: 6px solid var(--border-blue);
-            padding: 16px 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .match-card-content {
@@ -144,7 +152,7 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: lowercase;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .match-teams {
@@ -155,7 +163,7 @@
         }
 
         .match-teams-sm {
-            text-transform: lowercase; /* For second team and metadata on whatsapp */
+            text-transform: lowercase;
         }
 
         .match-group-small {
@@ -164,19 +172,20 @@
             padding: 1px 5px;
             font-size: 0.7rem;
             border-radius: 2px;
-            margin-left: 5px;
+            margin-left: 8px;
+            display: inline-block;
+            vertical-align: middle;
         }
 
-        /* Checkbox styling */
+        /* Checkbox Customizada Redonda/Seca */
         .select-check {
-            height: 25px;
-            width: 25px;
-            border-radius: 4px;
-            border: 2px solid var(--border-blue);
+            height: 26px;
+            width: 26px;
             cursor: pointer;
+            accent-color: var(--border-blue);
         }
 
-        /* Action Bar */
+        /* Barra de Ações Flutuante */
         .action-bar {
             position: fixed;
             bottom: 0;
@@ -191,7 +200,7 @@
         }
 
         .action-btn {
-            background: rgba(255, 255, 255, 0.05); /* Grey/transparent action button */
+            background: rgba(255, 255, 255, 0.05);
             color: var(--card-white);
             border: 2px solid rgba(255, 255, 255, 0.1);
             padding: 16px 40px;
@@ -203,6 +212,7 @@
             max-width: 600px;
             border-radius: 4px;
             transition: all 0.2s ease;
+            text-align: center;
         }
 
         .action-btn.primary {
@@ -210,12 +220,6 @@
             color: var(--bg-blue);
             border-color: var(--accent-neon);
         }
-
-        .action-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--card-white);
-        }
-
     </style>
 </head>
 <body>
@@ -227,28 +231,24 @@
     <main id="screen-filter">
         <h1 class="page-title" id="filter-title">o que você quer assistir?</h1>
         
-        <div class="filter-grid" id="filter-container">
-            <div class="filter-box" onclick="setFilter('BRASIL', this)">BRASIL</div>
-            <div class="filter-box" onclick="setFilter('ARGENTINA', this)">ARGENTINA</div>
-            <div class="filter-box" onclick="setFilter('ALEMANHA', this)">ALEMANHA</div>
-            <div class="filter-box" onclick="setFilter('PORTUGAL', this)">PORTUGAL</div>
-            <div class="filter-box">...</div>
-            <div class="filter-box">...</div>
-            <div class="filter-box" onclick="setFilter('SON', this)">SON</div>
-            <div class="filter-box" onclick="setFilter('HAALAND', this)">HAALAND</div>
-            <div class="filter-box">...</div>
+        <div class="section-subtitle" id="sub-countries">países</div>
+        <div class="filter-grid" id="container-countries">
+            <div class="loading">buscando países...</div>
         </div>
-
+        
+        <div class="section-subtitle" id="sub-players">jogadores / estrelas</div>
+        <div class="filter-grid" id="container-players">
+            <div class="loading">buscando jogadores...</div>
+        </div>
     </main>
 
     <main id="screen-matches" style="display:none;">
         <h1 class="page-title" id="matches-title">selecione</h1>
-        <div id="loading-state" class="loading">Loading matches...</div>
         <div class="match-list-container" id="matches-container"></div>
     </main>
 
     <div class="action-bar" id="action-bar-filter">
-        <button class="action-btn" onclick="showMatchesScreen()">partidas</button>
+        <button class="action-btn" onclick="showMatchesScreen()" id="btn-partidas">partidas</button>
     </div>
 
     <div class="action-bar" id="action-bar-whatsapp" style="display:none;">
@@ -257,24 +257,25 @@
 
     <script>
         // ==========================================
-        // FINAL CONFIGURATION CONFIG
+        // CONFIGURAÇÕES LINKADAS DA SUA API E GITHUB
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbzUrHvILOxOBaNsK5OWR4K4Oh487qeGAa7fxD7koqv1MfmJlyLpeuUExk7RAOT-Wll_/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbznFjiulxBBPihUQsRevdSkkTYNF4nDQ6p6jLbmYE0dHy2b8Qh35A2aVHMLw_Hio1Ph/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         // ==========================================
-        // LOCALIZATION DICTIONARIES
+        // DICIONÁRIO DE TRADUÇÃO
         // ==========================================
         let currentLang = 'PT';
         let matchesData = [];
-        let activeFilter = null;
+        let activeFilterValue = null; 
         const selectedMatches = new Set();
 
         const dictionary = {
             EN: {
                 filterTitle: "what do you want to watch?",
                 matchesTitle: "select",
-                loading: "Loading world cup matches...",
+                subCountries: "countries",
+                subPlayers: "featured players",
                 actionPartidas: "matches",
                 greeting: "Hello! Let's watch these matches?",
                 footerMsg: "Plan yours here: ",
@@ -283,7 +284,8 @@
             PT: {
                 filterTitle: "o que você quer assistir?",
                 matchesTitle: "selecione",
-                loading: "Carregando jogos da copa...",
+                subCountries: "países",
+                subPlayers: "jogadores / estrelas",
                 actionPartidas: "partidas",
                 greeting: "Olá! Vamos assistir a esses jogos?",
                 footerMsg: "Monte a sua programação aqui: ",
@@ -291,55 +293,87 @@
             }
         };
 
-        const locales = {
-            EN: 'en-US',
-            PT: 'pt-BR'
-        };
-
+        const locales = { EN: 'en-US', PT: 'pt-BR' };
         const weekdaysMap = {
             EN: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
             PT: ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
         };
 
-        const stadiumsMap = { // Short codes for whatsapp clarity
-            "Guadalajara Stadium": "estadio guadalajara",
-            "MetLife Stadium": "estadio metlife",
-            "Lumen Field": "estadio lumen",
-            "BBVA Stadium": "estadio bbva"
-        };
-
         // ==========================================
-        // APPLICATION LOGIC
+        // CAPTURA E PROCESSAMENTO DOS DADOS (API)
         // ==========================================
-
+        
         async function fetchMatches() {
             try {
                 const response = await fetch(API_URL);
                 matchesData = await response.json();
                 
-                // Chronological sort
+                // Ordenação Cronológica por Fuso Padrão
                 matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
+                
+                buildFilterButtons();
             } catch (error) {
-                console.error("Error fetching data: ", error);
-                document.getElementById('loading-state').innerText = "Failed to load matches.";
+                console.error("Erro ao carregar dados da API: ", error);
+                document.getElementById('container-countries').innerHTML = "Erro ao carregar.";
+                document.getElementById('container-players').innerHTML = "Erro ao carregar.";
             }
         }
 
-        // Screen 1 Logic
-        function setFilter(filter, element) {
-            // Remove active from all boxes
-            const boxes = document.querySelectorAll('.filter-box');
-            boxes.forEach(box => box.classList.remove('active'));
+        function buildFilterButtons() {
+            const countriesSet = new Set();
+            const playersSet = new Set();
 
-            if (activeFilter === filter) {
-                // Clicking again removes filter
-                activeFilter = null;
+            matchesData.forEach(match => {
+                // Regra 1: Países (has_player === 0 ou falso)
+                // Usamos o Team1_PT e Team2_PT como base padrão dos botões
+                if (Number(match.has_player) === 0) {
+                    if(match.Team1_PT) countriesSet.add(match.Team1_PT.toUpperCase().trim());
+                    if(match.Team2_PT) countriesSet.add(match.Team2_PT.toUpperCase().trim());
+                } 
+                // Regra 2: Jogadores especiais (has_player === 1 e filter_especial preenchido)
+                else if (Number(match.has_player) === 1 && match.filter_especial) {
+                    playersSet.add(match.filter_especial.toUpperCase().trim());
+                }
+            });
+
+            // Renderizar botões de Países
+            const countriesContainer = document.getElementById('container-countries');
+            countriesContainer.innerHTML = '';
+            Array.from(countriesSet).sort().forEach(country => {
+                const btn = document.createElement('div');
+                btn.className = 'filter-box';
+                btn.innerText = country;
+                btn.onclick = () => selectFilter(country, btn);
+                countriesContainer.appendChild(btn);
+            });
+
+            // Renderizar botões de Jogadores
+            const playersContainer = document.getElementById('container-players');
+            playersContainer.innerHTML = '';
+            Array.from(playersSet).sort().forEach(player => {
+                const btn = document.createElement('div');
+                btn.className = 'filter-box';
+                btn.innerText = player;
+                btn.onclick = () => selectFilter(player, btn);
+                playersContainer.appendChild(btn);
+            });
+        }
+
+        function selectFilter(value, element) {
+            const allBoxes = document.querySelectorAll('.filter-box');
+            allBoxes.forEach(box => box.classList.remove('active'));
+
+            if (activeFilterValue === value) {
+                activeFilterValue = null; // Desmarcar se clicar no mesmo
             } else {
-                activeFilter = filter;
+                activeFilterValue = value;
                 element.classList.add('active');
             }
         }
 
+        // ==========================================
+        // MUDANÇA DE TELA E BUSCA AVANÇADA
+        // ==========================================
         function showMatchesScreen() {
             document.getElementById('screen-filter').style.display = 'none';
             document.getElementById('action-bar-filter').style.display = 'none';
@@ -350,56 +384,53 @@
             renderFilteredMatches();
         }
 
-        // Screen 2 Logic
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
-            document.getElementById('loading-state').style.display = 'none';
-            container.style.display = 'block';
 
-            let displayedCount = 0;
+            let hasMatches = false;
 
             matchesData.forEach(match => {
-                const team1PT = match.Team1_PT;
-                const team2PT = match.Team2_PT;
+                let showMatch = false;
 
-                // Check if match contains the filter
-                let isMatch = false;
-                if (!activeFilter) {
-                    isMatch = true; // Show all if no filter
+                if (!activeFilterValue) {
+                    showMatch = true; // Se nenhum botão foi clicado, exibe tudo
                 } else {
-                    const searchFilter = activeFilter.toUpperCase();
-                    // Basic search against team names and group (could be expanded)
-                    if (
-                        team1PT.toUpperCase().includes(searchFilter) || 
-                        team2PT.toUpperCase().includes(searchFilter) || 
-                        match.Group.toUpperCase().includes(searchFilter)
-                    ) {
-                        isMatch = true;
+                    const search = activeFilterValue.toUpperCase();
+                    const t1PT = (match.Team1_PT || "").toUpperCase();
+                    const t2PT = (match.Team2_PT || "").toUpperCase();
+                    const t1EN = (match.Team1_EN || "").toUpperCase();
+                    const t2EN = (match.Team2_EN || "").toUpperCase();
+                    const fEspecial = (match.filter_especial || "").toUpperCase();
+
+                    // BUSCA DINÂMICA: Verifica nos times (PT/EN) ou na coluna filter_especial
+                    if (t1PT.includes(search) || t2PT.includes(search) || 
+                        t1EN.includes(search) || t2EN.includes(search) || 
+                        fEspecial.includes(search)) {
+                        showMatch = true;
                     }
                 }
 
-                if (isMatch) {
-                    displayedCount++;
-
-                    // Dynamic browser locale fuso horário conversion
-                    const matchDate = new Date(match.DateTime_UTC);
+                if (showMatch) {
+                    hasMatches = true;
                     
+                    // Cálculo de fuso horário automático no dispositivo do usuário
+                    const matchDate = new Date(match.DateTime_UTC);
                     const weekdayIndex = matchDate.getDay();
-                    const weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3); // lowercase short
+                    const weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
                     
                     const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
                     const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                     
-                    const team1Display = currentLang === 'EN' ? match.Team1_EN : team1PT;
-                    const team2Display = currentLang === 'EN' ? match.Team2_EN : team2PT;
+                    const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
+                    const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
                     const card = document.createElement('div');
                     card.className = 'match-card';
                     card.innerHTML = `
                         <div class="match-card-content">
                             <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium}</div>
-                            <div class="match-teams">${team1Display} VS <span class="match-teams-sm">${team2Display}</span><span class="match-group-small">${match.Group}</span></div>
+                            <div class="match-teams">${team1} VS <span class="match-teams-sm">${team2}</span><span class="match-group-small">${match.Group}</span></div>
                         </div>
                         <input type="checkbox" class="select-check" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
@@ -407,8 +438,8 @@
                 }
             });
 
-            if (displayedCount === 0) {
-                container.innerHTML = `<p class="loading">No matches found for "${activeFilter}".</p>`;
+            if (!hasMatches) {
+                container.innerHTML = `<div class="loading" style="text-transform: lowercase;">nenhuma partida encontrada.</div>`;
             }
 
             updateShareButtonText();
@@ -430,24 +461,26 @@
             document.getElementById('share-btn').innerText = `${textBase} (${count})`;
         }
 
+        // ==========================================
+        // TRADUÇÃO DE INTERFACE EM TEMPO REAL
+        // ==========================================
         function toggleLanguage() {
             currentLang = currentLang === 'EN' ? 'PT' : 'EN';
             document.getElementById('lang-toggle').innerText = currentLang === 'EN' ? 'PT 🇧🇷' : 'EN 🇺🇸';
+            
             document.getElementById('filter-title').innerText = dictionary[currentLang].filterTitle;
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
-            document.getElementById('loading-state').innerText = dictionary[currentLang].loading;
-            
-            // Update the 'partidas' button
-            document.querySelector('#action-bar-filter .action-btn').innerText = dictionary[currentLang].actionPartidas;
+            document.getElementById('sub-countries').innerText = dictionary[currentLang].subCountries;
+            document.getElementById('sub-players').innerText = dictionary[currentLang].subPlayers;
+            document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            // Re-render screen if it's active
             if (document.getElementById('screen-matches').style.display !== 'none') {
                 renderFilteredMatches();
             }
         }
 
         // ==========================================
-        // WHATSAPP GENERATION LOGIC
+        // ENVIO DO TEXTO FORMATADO PARA WHATSAPP
         // ==========================================
         function shareToWhatsApp() {
             if (selectedMatches.size === 0) {
@@ -457,23 +490,19 @@
 
             let message = `${dictionary[currentLang].greeting}\n`;
             
-            // Preserve chronological sort order for output
             matchesData.forEach(match => {
                 if (selectedMatches.has(match.ID.toString())) {
                     const matchDate = new Date(match.DateTime_UTC);
-                    
                     const weekdayIndex = matchDate.getDay();
-                    const weekday = weekdaysMap[currentLang][weekdayIndex]; // lowercase long
+                    const weekday = weekdaysMap[currentLang][weekdayIndex];
 
                     const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
                     const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
                     
-                    const stadium = stadiumsMap[match.Stadium] || match.Stadium; // Use short code if available
-
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
-                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${timeStr} - ${stadium}\n`;
+                    message += `• ${team1} x ${team2} - ${weekday} ${dateStr} - ${timeStr} - ${match.Stadium}\n`;
                 }
             });
 
@@ -485,9 +514,8 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // Load data on start
+        // Inicializa buscando a planilha
         fetchMatches();
-
     </script>
 </body>
 </html>
