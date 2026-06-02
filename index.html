@@ -435,16 +435,17 @@
             renderFilteredMatches();
         }
 
-        // LÓGICA DE CONVERSÃO DE FUSO HORÁRIO RECALIBRADA BASEADA NO LESTE DOS EUA (EST / UTC-5)
+        // 🌍 NOVA ESTRATÉGIA DE CONVERSÃO NATIVA PURA (LÊ COMO UTC REAL)
         function getAdjustedDateTime(rawString) {
             if (!rawString) return null;
             
-            // Remove o indicador de fuso "Z" bruto se ele existir para evitar falsos cálculos automáticos do motor JavaScript
-            let cleanStr = rawString.replace("Z", "");
+            let cleanStr = rawString.trim();
+            // Se a string não terminar com Z, nós adicionamos para garantir a interpretação UTC padrão
+            if (!cleanStr.endsWith("Z")) {
+                cleanStr += "Z";
+            }
             
-            // Criamos o objeto de data interpretando o horário da planilha como fuso local do estádio (Central de Nova York - UTC-5 estável)
-            const matchDate = new Date(cleanStr + "-05:00");
-            return matchDate;
+            return new Date(cleanStr);
         }
 
         function renderFilteredMatches() {
@@ -491,8 +492,8 @@
                         const weekdayIndex = matchDate.getDay();
                         weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                         
-                        dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                        timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                        dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
+                        timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
                     
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
@@ -592,8 +593,8 @@
 
                     if (matchDate && !isNaN(matchDate.getTime())) {
                         weekday = weekdaysMap[currentLang][matchDate.getDay()];
-                        dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                        timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                        dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
+                        timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
 
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
