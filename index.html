@@ -9,10 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-blue: #0F3097;       /* Azul Royal Vivo do uniforme de 2002 */
-            --bg-darker: #0A226B;     /* Sombra para profundidade */
+            --bg-blue: #0F3097;
+            --bg-darker: #0A226B;
             --card-white: #FFFFFF;
-            --accent-neon: #D4FF00;   /* Amarelo/Verde limão elétrico de 2002 */
+            --accent-neon: #D4FF00;
             --text-dark: #051238;
             --text-muted: #627293;
             --kit-white: #EBF0FF;
@@ -35,19 +35,6 @@
             overflow-x: hidden;
         }
 
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 120px;
-            height: 120px;
-            background: var(--kit-white);
-            clip-path: polygon(100% 0, 0 0, 100% 100%);
-            opacity: 0.15;
-            pointer-events: none;
-        }
-
         header {
             max-width: 600px;
             margin: 0 auto;
@@ -68,12 +55,6 @@
             border-radius: 0px;
             text-transform: uppercase;
             font-size: 0.8rem;
-            transition: all 0.2s ease;
-        }
-
-        .lang-btn:hover {
-            background: var(--accent-neon);
-            color: var(--bg-blue);
         }
 
         main {
@@ -94,16 +75,13 @@
             margin-bottom: 30px;
             color: var(--card-white);
             font-weight: 400;
-            letter-spacing: -0.5px;
         }
 
-        /* Grid Única de Filtros Sem Divisões de Categorias */
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             width: 100%;
-            margin-top: 10px;
         }
 
         .filter-box {
@@ -121,19 +99,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0px; /* Cantos vivos e secos */
-        }
-
-        .filter-box:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.4);
+            border-radius: 0px;
         }
 
         .filter-box.active {
             background: var(--card-white);
             color: var(--text-dark);
             border-color: var(--accent-neon);
-            box-shadow: 0 0 12px rgba(212, 255, 0, 0.2);
             font-weight: 900;
         }
 
@@ -143,7 +115,6 @@
             border-style: dashed;
         }
 
-        /* Lista de Partidas */
         .match-list-container {
             width: 100%;
         }
@@ -168,18 +139,6 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 6px 18px rgba(5, 18, 56, 0.2);
-            position: relative;
-        }
-
-        .match-card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--kit-white);
-            opacity: 0.4;
         }
 
         .match-card-content {
@@ -200,12 +159,6 @@
             font-weight: 900;
             color: var(--text-dark);
             text-transform: uppercase;
-            letter-spacing: -0.3px;
-        }
-
-        .match-teams-sm {
-            text-transform: lowercase;
-            font-weight: 700;
         }
 
         .match-group-badge {
@@ -214,10 +167,8 @@
             padding: 1px 6px;
             font-size: 0.7rem;
             font-weight: 700;
-            border-radius: 0px;
             margin-left: 8px;
             display: inline-block;
-            vertical-align: middle;
         }
 
         .select-check {
@@ -227,7 +178,6 @@
             accent-color: var(--bg-blue);
         }
 
-        /* Barra de Ações Inferiores */
         .action-bar {
             position: fixed;
             bottom: 0;
@@ -253,12 +203,7 @@
             width: 100%;
             max-width: 560px;
             border-radius: 0px;
-            transition: all 0.2s ease;
             text-align: center;
-        }
-
-        .action-btn:hover {
-            border-color: var(--card-white);
         }
 
         .action-btn.primary {
@@ -266,10 +211,6 @@
             color: var(--text-dark);
             border-color: var(--accent-neon);
             font-weight: 900;
-        }
-
-        .action-btn.primary:hover {
-            box-shadow: 0 0 15px rgba(212, 255, 0, 0.4);
         }
     </style>
 </head>
@@ -300,8 +241,7 @@
     </div>
 
     <script>
-        // URL ATUALIZADA DA SUA API DO GOOGLE
-        const API_URL = "https://script.google.com/macros/s/AKfycbzycmTZFSYxA-g5HL1kJ-6QZoU_HQcU2ncMKsZWMwamuzUMhkGWE6Ie6lNL8G0Q2bqC/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbzj4lfq65jlkGTHEoWuBLp_exK_PfM3br9xAIV2Scz3OGlvQ8bumwsYsa-L3binDxnf/exec";
         const GITHUB_PAGES_URL = "https://annefrancischini-vc.github.io/my-world-cup-matches/";
 
         let currentLang = 'PT';
@@ -310,22 +250,8 @@
         const selectedMatches = new Set();
 
         const dictionary = {
-            EN: {
-                filterTitle: "what do you want to watch?",
-                matchesTitle: "select",
-                actionPartidas: "matches",
-                greeting: "Hello! Let's watch these matches?",
-                footerMsg: "Plan yours here: ",
-                shareBtnBase: "send via whatsapp"
-            },
-            PT: {
-                filterTitle: "o que você quer assistir?",
-                matchesTitle: "selecione",
-                actionPartidas: "partidas",
-                greeting: "Olá! Vamos assistir a esses jogos?",
-                footerMsg: "Monte a sua programação aqui: ",
-                shareBtnBase: "enviar por whatsapp"
-            }
+            EN: { filterTitle: "what do you want to watch?", matchesTitle: "select", actionPartidas: "matches", greeting: "Hello! Let's watch these matches?", footerMsg: "Plan yours here: ", shareBtnBase: "send via whatsapp" },
+            PT: { filterTitle: "o que você quer assistir?", matchesTitle: "selecione", actionPartidas: "partidas", greeting: "Olá! Vamos assistir a esses jogos?", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
         const locales = { EN: 'en-US', PT: 'pt-BR' };
@@ -340,18 +266,17 @@
                 matchesData = await response.json();
                 
                 if (!Array.isArray(matchesData)) {
-                    throw new Error("Formato inválido recebido.");
+                    document.getElementById('container-unificado').innerHTML = "<div class='loading'>Planilha vazia ou com erro de colunas.</div>";
+                    return;
                 }
 
-                matchesData.sort((a, b) => new Date(a.DateTime_UTC) - new Date(b.DateTime_UTC));
                 buildFilterButtons();
             } catch (error) {
-                console.error("Erro na API: ", error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados. verifique a publicação do seu app script.</div>";
+                console.error(error);
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro de conexão com a API.</div>";
             }
         }
 
-        // Agrupa países e jogadores de forma invisível em uma lista alfabética corrida
         function buildFilterButtons() {
             const filterSet = new Set();
 
@@ -360,9 +285,9 @@
                 const t2 = currentLang === 'EN' ? (match.Team2_EN || "") : (match.Team2_PT || "");
                 const fEspecial = match.filter_especial || "";
 
-                if (t1.trim() !== "") filterSet.add(t1.toUpperCase().trim());
-                if (t2.trim() !== "") filterSet.add(t2.toUpperCase().trim());
-                if (fEspecial.trim() !== "") filterSet.add(fEspecial.toUpperCase().trim());
+                if (String(t1).trim() !== "") filterSet.add(String(t1).toUpperCase().trim());
+                if (String(t2).trim() !== "") filterSet.add(String(t2).toUpperCase().trim());
+                if (String(fEspecial).trim() !== "") filterSet.add(String(fEspecial).toUpperCase().trim());
             });
 
             const container = document.getElementById('container-unificado');
@@ -378,7 +303,6 @@
                 container.appendChild(btn);
             });
 
-            // Completa os blocos vazios com "..." para manter o padrão visual de 3 colunas
             const remainder = sortedFilters.length % 3;
             if (remainder !== 0) {
                 const needed = 3 - remainder;
@@ -404,36 +328,30 @@
         function showMatchesScreen() {
             document.getElementById('screen-filter').style.display = 'none';
             document.getElementById('action-bar-filter').style.display = 'none';
-            
             document.getElementById('screen-matches').style.display = 'flex';
             document.getElementById('action-bar-whatsapp').style.display = 'flex';
-
             renderFilteredMatches();
         }
 
-        // Varre múltiplos filtros contra os times e a coluna filter_especial (Ex: Haaland = Noruega)
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
-
             let hasMatches = false;
 
             matchesData.forEach(match => {
                 let showMatch = false;
 
                 if (selectedFilters.size === 0) {
-                    showMatch = true; // Se nenhum card for selecionado, exibe toda a tabela
+                    showMatch = true;
                 } else {
-                    const t1PT = (match.Team1_PT || "").toUpperCase().trim();
-                    const t2PT = (match.Team2_PT || "").toUpperCase().trim();
-                    const t1EN = (match.Team1_EN || "").toUpperCase().trim();
-                    const t2EN = (match.Team2_EN || "").toUpperCase().trim();
-                    const fEspecial = (match.filter_especial || "").toUpperCase().trim();
+                    const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
+                    const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
+                    const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
+                    const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
+                    const fEspecial = String(match.filter_especial || "").toUpperCase().trim();
 
                     for (let filter of selectedFilters) {
-                        if (t1PT === filter || t2PT === filter || 
-                            t1EN === filter || t2EN === filter || 
-                            fEspecial === filter) {
+                        if (t1PT === filter || t2PT === filter || t1EN === filter || t2EN === filter || fEspecial === filter) {
                             showMatch = true;
                             break; 
                         }
@@ -443,12 +361,19 @@
                 if (showMatch) {
                     hasMatches = true;
                     
-                    const matchDate = new Date(match.DateTime_UTC);
-                    const weekdayIndex = matchDate.getDay();
-                    const weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
-                    
-                    const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                    const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    let dateStr = "A definir";
+                    let timeStr = "--:--";
+                    let weekdayShort = "---";
+
+                    if (match.DateTime_UTC) {
+                        const matchDate = new Date(match.DateTime_UTC);
+                        if (!isNaN(matchDate.getTime())) {
+                            const weekdayIndex = matchDate.getDay();
+                            weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3);
+                            dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                        }
+                    }
                     
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
@@ -458,7 +383,7 @@
                     card.innerHTML = `
                         <div class="match-card-content">
                             <div class="match-meta">${weekdayShort} - ${dateStr} - ${match.Stadium || ""}</div>
-                            <div class="match-teams">${team1} VS <span class="match-teams-sm">${team2}</span><span class="match-group-badge">GRP ${match.Group || ""}</span></div>
+                            <div class="match-teams">${team1} VS <span style="text-transform:lowercase; font-weight:700;">${team2}</span><span class="match-group-badge">GRP ${match.Group || ""}</span></div>
                         </div>
                         <input type="checkbox" class="select-check" data-id="${match.ID}" ${selectedMatches.has(match.ID.toString()) ? 'checked' : ''} onchange="handleSelect(this)">
                     `;
@@ -469,24 +394,18 @@
             if (!hasMatches) {
                 container.innerHTML = `<div class="loading">nenhuma partida encontrada.</div>`;
             }
-
             updateShareButtonText();
         }
 
         function handleSelect(checkbox) {
             const id = checkbox.getAttribute('data-id');
-            if (checkbox.checked) {
-                selectedMatches.add(id);
-            } else {
-                selectedMatches.delete(id);
-            }
+            if (checkbox.checked) selectedMatches.add(id);
+            else selectedMatches.delete(id);
             updateShareButtonText();
         }
 
         function updateShareButtonText() {
-            const count = selectedMatches.size;
-            const textBase = dictionary[currentLang].shareBtnBase;
-            document.getElementById('share-btn').innerText = `${textBase} (${count})`;
+            document.getElementById('share-btn').innerText = `${dictionary[currentLang].shareBtnBase} (${selectedMatches.size})`;
         }
 
         function toggleLanguage() {
@@ -500,11 +419,10 @@
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
 
-            // Altera os nomes dos botões de países de idioma sem perder as seleções ativas do usuário
             matchesData.forEach(match => {
-                const sourcePT = [(match.Team1_PT || "").toUpperCase(), (match.Team2_PT || "").toUpperCase()];
-                const sourceEN = [(match.Team1_EN || "").toUpperCase(), (match.Team2_EN || "").toUpperCase()];
-                const fEsp = (match.filter_especial || "").toUpperCase();
+                const sourcePT = [String(match.Team1_PT || "").toUpperCase(), String(match.Team2_PT || "").toUpperCase()];
+                const sourceEN = [String(match.Team1_EN || "").toUpperCase(), String(match.Team2_EN || "").toUpperCase()];
+                const fEsp = String(match.filter_especial || "").toUpperCase();
 
                 oldFilters.forEach(f => {
                     if (f === fEsp && f !== "") selectedFilters.add(f); 
@@ -519,29 +437,29 @@
             });
 
             buildFilterButtons();
-
-            if (document.getElementById('screen-matches').style.display !== 'none') {
-                renderFilteredMatches();
-            }
+            if (document.getElementById('screen-matches').style.display !== 'none') renderFilteredMatches();
         }
 
         function shareToWhatsApp() {
-            if (selectedMatches.size === 0) {
-                alert(currentLang === 'EN' ? "Please select at least one match!" : "Por favor, selecione pelo menos um jogo primeiro!");
-                return;
-            }
+            if (selectedMatches.size === 0) return;
 
             let message = `${dictionary[currentLang].greeting}\n`;
             
             matchesData.forEach(match => {
                 if (selectedMatches.has(match.ID.toString())) {
-                    const matchDate = new Date(match.DateTime_UTC);
-                    const weekdayIndex = matchDate.getDay();
-                    const weekday = weekdaysMap[currentLang][weekdayIndex];
+                    let dateStr = "";
+                    let timeStr = "";
+                    let weekday = "";
 
-                    const dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                    const timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
-                    
+                    if (match.DateTime_UTC) {
+                        const matchDate = new Date(match.DateTime_UTC);
+                        if (!isNaN(matchDate.getTime())) {
+                            weekday = weekdaysMap[currentLang][matchDate.getDay()];
+                            dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
+                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                        }
+                    }
+
                     const team1 = currentLang === 'EN' ? match.Team1_EN : match.Team1_PT;
                     const team2 = currentLang === 'EN' ? match.Team2_EN : match.Team2_PT;
 
@@ -550,11 +468,7 @@
             });
 
             message += `\n${dictionary[currentLang].footerMsg}${GITHUB_PAGES_URL}`;
-            
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-            
-            window.open(whatsappUrl, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
         }
 
         fetchMatches();
