@@ -15,6 +15,7 @@
             --accent-neon: #D4FF00;
             --text-dark: #051238;
             --text-muted: #627293;
+            --kit-white: #EBF0FF;
         }
 
         * {
@@ -90,7 +91,7 @@
             padding: 15px 5px;
             text-align: center;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.80rem;
             font-weight: 700;
             text-transform: uppercase;
             transition: all 0.15s ease;
@@ -241,6 +242,28 @@
         const selectedFilters = new Set();
         const selectedMatches = new Set();
 
+        // Lista estrita de 18 opções solicitadas (mapeamento PT <-> EN correspondente)
+        const fixedOptions = [
+            { PT: "ALEMANHA", EN: "GERMANY", type: "country" },
+            { PT: "ARGENTINA", EN: "ARGENTINA", type: "country" },
+            { PT: "URUGUAI", EN: "URUGUAY", type: "country" },
+            { PT: "BRASIL", EN: "BRAZIL", type: "country" },
+            { PT: "BÉLGICA", EN: "BELGIUM", type: "country" },
+            { PT: "DAVIES", EN: "DAVIES", type: "player" },
+            { PT: "ESPANHA", EN: "SPAIN", type: "country" },
+            { PT: "FRANÇA", EN: "FRANCE", type: "country" },
+            { PT: "GYÖKERES", EN: "GYÖKERES", type: "player" },
+            { PT: "HAALAND", EN: "HAALAND", type: "player" },
+            { PT: "HOLANDA", EN: "NETHERLANDS", type: "country" },
+            { PT: "INGLATERRA", EN: "ENGLAND", type: "country" },
+            { PT: "LUIZ DIAS", EN: "LUIZ DIAS", type: "player" },
+            { PT: "MARROCOS", EN: "MOROCCO", type: "country" },
+            { PT: "MODRIC", EN: "MODRIC", type: "player" },
+            { PT: "PORTUGAL", EN: "PORTUGAL", type: "country" },
+            { PT: "SALAH", EN: "SALAH", type: "player" },
+            { PT: "SON", EN: "SON", type: "player" }
+        ];
+
         const dictionary = {
             EN: { filterTitle: "what do you want to watch?", matchesTitle: "select", actionPartidas: "matches", greeting: "Hello! Let's watch these matches?", footerMsg: "Plan yours here: ", shareBtnBase: "send via whatsapp" },
             PT: { filterTitle: "o que você quer assistir?", matchesTitle: "selecione", actionPartidas: "partidas", greeting: "Olá! Vamos assistir a esses jogos?", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
@@ -259,56 +282,26 @@
                 buildFilterButtons();
             } catch (error) {
                 console.error(error);
-                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados da aba app.</div>";
+                document.getElementById('container-unificado').innerHTML = "<div class='loading'>erro ao carregar dados.</div>";
             }
         }
 
+        // Renderiza exatamente as 18 opções na tela sem divisões de categorias
         function buildFilterButtons() {
-            const filterSet = new Set();
-
-            matchesData.forEach(match => {
-                const hasPlayer = Number(match.has_player);
-                
-                if (currentLang === 'PT') {
-                    if (hasPlayer === 1 && match.filter_especial) {
-                        filterSet.add(match.filter_especial.toUpperCase().trim());
-                    } else {
-                        if (match.Team1_PT) filterSet.add(match.Team1_PT.toUpperCase().trim());
-                        if (match.Team2_PT) filterSet.add(match.Team2_PT.toUpperCase().trim());
-                    }
-                } else {
-                    if (hasPlayer === 1 && match.filter_especial) {
-                        filterSet.add(match.filter_especial.toUpperCase().trim());
-                    } else {
-                        if (match.Team1_EN) filterSet.add(match.Team1_EN.toUpperCase().trim());
-                        if (match.Team2_EN) filterSet.add(match.Team2_EN.toUpperCase().trim());
-                    }
-                }
-            });
-
             const container = document.getElementById('container-unificado');
             container.innerHTML = '';
-            
-            const sortedFilters = Array.from(filterSet).sort();
-            
-            sortedFilters.forEach(filterName => {
+
+            fixedOptions.forEach(opt => {
+                const displayName = currentLang === 'PT' ? opt.PT : opt.EN;
+                
                 const btn = document.createElement('div');
-                btn.className = `filter-box ${selectedFilters.has(filterName) ? 'active' : ''}`;
-                btn.innerText = filterName;
-                btn.onclick = () => toggleFilter(filterName, btn);
+                // Mantém o estado ativo persistente se o valor estiver no Set
+                btn.className = `filter-box ${selectedFilters.has(displayName) ? 'active' : ''}`;
+                btn.innerText = displayName;
+                btn.onclick = () => toggleFilter(displayName, btn);
                 container.appendChild(btn);
             });
 
-            const remainder = sortedFilters.length % 3;
-            if (remainder !== 0) {
-                const needed = 3 - remainder;
-                for (let i = 0; i < needed; i++) {
-                    const blank = document.createElement('div');
-                    blank.className = 'filter-box disabled';
-                    blank.innerText = '...';
-                    container.appendChild(blank);
-                }
-            }
             validateFilterButton();
         }
 
@@ -323,6 +316,7 @@
             validateFilterButton();
         }
 
+        // Validação estrita: Habilita o botão se houver pelo menos uma opção selecionada
         function validateFilterButton() {
             const btn = document.getElementById('btn-partidas');
             if (selectedFilters.size > 0) {
@@ -340,6 +334,7 @@
             renderFilteredMatches();
         }
 
+        // Realiza o cruzamento cirúrgico dos filtros com as colunas certas do JSON
         function renderFilteredMatches() {
             const container = document.getElementById('matches-container');
             container.innerHTML = '';
@@ -348,16 +343,30 @@
             matchesData.forEach(match => {
                 let showMatch = false;
 
-                const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
-                const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
-                const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
-                const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
-                const fEspecial = String(match.filter_especial || "").toUpperCase().trim();
-
+                // Varre cada filtro ativado pelo usuário
                 for (let filter of selectedFilters) {
-                    if (t1PT === filter || t2PT === filter || t1EN === filter || t2EN === filter || fEspecial === filter) {
-                        showMatch = true;
-                        break; 
+                    // Encontra a regra desse filtro na nossa matriz de configurações fixedOptions
+                    const foundOpt = fixedOptions.find(o => o.PT === filter || o.EN === filter);
+                    if (!foundOpt) continue;
+
+                    if (foundOpt.type === "player") {
+                        // Se for um jogador, valida estritamente a coluna filter_especial
+                        const specVal = String(match.filter_especial || "").toUpperCase().trim();
+                        if (specVal === foundOpt.PT) { // na base é sempre igual ao id PT
+                            showMatch = true;
+                            break;
+                        }
+                    } else {
+                        // Se for país, valida nas colunas dos times dependendo da língua
+                        const t1PT = String(match.Team1_PT || "").toUpperCase().trim();
+                        const t2PT = String(match.Team2_PT || "").toUpperCase().trim();
+                        const t1EN = String(match.Team1_EN || "").toUpperCase().trim();
+                        const t2EN = String(match.Team2_EN || "").toUpperCase().trim();
+
+                        if (t1PT === foundOpt.PT || t2PT === foundOpt.PT || t1EN === foundOpt.EN || t2EN === foundOpt.EN) {
+                            showMatch = true;
+                            break;
+                        }
                     }
                 }
 
@@ -417,7 +426,9 @@
             }
         }
 
+        // Alternância linguística que preserva os filtros selecionados convertendo-os de forma inteligente
         function toggleLanguage() {
+            const oldFilters = Array.from(selectedFilters);
             selectedFilters.clear();
             selectedMatches.clear();
 
@@ -427,6 +438,14 @@
             document.getElementById('filter-title').innerText = dictionary[currentLang].filterTitle;
             document.getElementById('matches-title').innerText = dictionary[currentLang].matchesTitle;
             document.getElementById('btn-partidas').innerText = dictionary[currentLang].actionPartidas;
+
+            // Transpõe a seleção ativa para o novo idioma correspondente
+            oldFilters.forEach(f => {
+                const found = fixedOptions.find(o => o.PT === f || o.EN === f);
+                if (found) {
+                    selectedFilters.add(currentLang === 'PT' ? found.PT : found.EN);
+                }
+            });
 
             buildFilterButtons();
             if (document.getElementById('screen-matches').style.display !== 'none') {
