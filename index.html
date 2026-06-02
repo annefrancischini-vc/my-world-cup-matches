@@ -433,15 +433,25 @@
             renderFilteredMatches();
         }
 
-        // 🌍 TRATAMENTO NATIVO PURO: Confia na string UTC da planilha sem modificador manual
+        // 🌍 LÓGICA DO PRESSUPOSTO: Remove o 'Z' e injeta a Holanda (+02:00) como Fuso Origem
         function getAdjustedDateTime(rawString) {
             if (!rawString) return null;
             let cleanStr = rawString.trim();
             
-            if (!cleanStr.endsWith("Z") && !cleanStr.includes("+") && !cleanStr.includes("-")) {
-                cleanStr += "Z";
+            // Remove qualquer indicação de UTC bruto vindo da planilha
+            cleanStr = cleanStr.replace("Z", "").trim();
+            cleanStr = cleanStr.replace(" ", "T");
+
+            if (cleanStr.includes("/")) {
+                const parts = cleanStr.split("T");
+                const dateParts = parts[0].split("/");
+                const timeStr = parts[1] || "00:00:00";
+                cleanStr = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timeStr}`;
             }
-            return new Date(cleanStr);
+
+            // Força o sistema a entender que o horário digitado é nativo da Holanda (+02:00)
+            const finalDate = new Date(cleanStr + "+02:00");
+            return isNaN(finalDate.getTime()) ? null : finalDate;
         }
 
         function renderFilteredMatches() {
@@ -488,7 +498,6 @@
                         const weekdayIndex = matchDate.getDay();
                         weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
                         
-                        // Captura a localidade correta sem forçar travas
                         dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
                         timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
@@ -519,6 +528,7 @@
             validateWhatsappButton();
         }
 
+        // State handlers
         function toggleMatchSelection(matchId, element) {
             if (selectedMatches.has(matchId)) {
                 selectedMatches.delete(matchId);
