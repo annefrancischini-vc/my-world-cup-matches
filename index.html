@@ -191,7 +191,6 @@
             to { transform: scale(1.2); opacity: 1; }
         }
 
-        /* 🔵 ESTADO PADRÃO: Cards de Partidas começam transparentes/azuis com texto Branco (Idêntico aos filtros) */
         .match-card {
             background: rgba(255, 255, 255, 0.03);
             color: var(--card-white);
@@ -225,7 +224,6 @@
             letter-spacing: -0.3px;
         }
 
-        /* ⚪ ESTADO SELECIONADO: Inverte para fundo Branco e texto Azul Escuro (Idêntico aos filtros ativos) */
         .match-card.selected {
             border-color: var(--accent-neon);
             background-color: var(--card-white);
@@ -356,7 +354,6 @@
             PT: { mainTitle: "A Copa do Mundo Chegou", filterTitle: "o que você quer assistir?", matchesTitle: "selecione as partidas", actionPartidas: "ver partidas", greeting: "Olá! Vamos assistir a esses jogos?\n", footerMsg: "Monte a sua programação aqui: ", shareBtnBase: "enviar por whatsapp" }
         };
 
-        const locales = { EN: 'en-US', PT: 'pt-BR' };
         const weekdaysMap = {
             EN: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
             PT: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
@@ -481,8 +478,10 @@
                         if (!isNaN(matchDate.getTime())) {
                             const weekdayIndex = matchDate.getDay();
                             weekdayShort = weekdaysMap[currentLang][weekdayIndex].substring(0, 3).toLowerCase();
-                            dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                            
+                            // 🌍 CORREÇÃO DE FUSO: Deixa o navegador usar as configurações e o fuso nativo do sistema operacional
+                            dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
+                            timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
                     
@@ -584,8 +583,9 @@
                         const matchDate = new Date(rawDate);
                         if (!isNaN(matchDate.getTime())) {
                             weekday = weekdaysMap[currentLang][matchDate.getDay()];
-                            dateStr = matchDate.toLocaleDateString(locales[currentLang], { day: 'numeric', month: 'numeric' });
-                            timeStr = matchDate.toLocaleTimeString(locales[currentLang], { hour: '2-digit', minute: '2-digit', hour12: false });
+                            // 🌍 CORREÇÃO DE FUSO NO SHARE: Garante que o texto enviado vá baseado na hora local do dispositivo de origem
+                            dateStr = matchDate.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' });
+                            timeStr = matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
                         }
                     }
 
